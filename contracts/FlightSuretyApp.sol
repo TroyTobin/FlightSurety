@@ -332,3 +332,32 @@ contract FlightSuretyApp {
 // endregion
 
 }   
+
+
+// Interface for data contract (separation of data)
+interface FlightSuretyData {
+
+    function isOperational() external
+                             view
+                             returns(bool);
+
+    function setOperatingStatus(bool mode) external;
+
+    function registerAirline() external
+                               pure;
+    
+    function buy() external
+                   payable;
+
+    function creditInsurees() external
+                              pure;
+
+    function pay() external
+                   pure;
+
+    function fund() external
+                    payable;
+
+    receive() external
+              payable;
+}
