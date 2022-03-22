@@ -34,6 +34,12 @@ contract FlightSuretyApp {
     }
     mapping(bytes32 => Flight) private flights;
 
+
+    /********************************************************************************************/
+    /*                                       DATA Contract                                      */
+    /********************************************************************************************/
+    FlightSuretyData dataContract;
+
  
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
@@ -71,8 +77,9 @@ contract FlightSuretyApp {
     * @dev Contract constructor
     *
     */
-    constructor() 
+    constructor(address payable dataContractAddress) 
     {
+        dataContract = FlightSuretyData(dataContractAddress);
         contractOwner = msg.sender;
     }
 
