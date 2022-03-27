@@ -12,6 +12,9 @@ contract FlightSuretyData {
     address private contractOwner;                                      // Account used to deploy contract
     bool private operational = true;                                    // Blocks all state changes throughout the contract if false
 
+    mapping(address => uint256) private authorizedContracts;
+
+
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/
@@ -62,10 +65,9 @@ contract FlightSuretyData {
     *
     * @return A bool that is the current operating status
     */      
-    function isOperational() 
-                            public 
-                            view 
-                            returns(bool) 
+    function isOperational() public 
+                             view 
+                             returns(bool) 
     {
         return operational;
     }
@@ -76,14 +78,22 @@ contract FlightSuretyData {
     *
     * When operational mode is disabled, all write transactions except for this one will fail
     */    
-    function setOperatingStatus
-                            (
-                                bool mode
-                            ) 
-                            external
-                            requireContractOwner 
+    function setOperatingStatus(bool mode) external
+        requireContractOwner 
     {
         operational = mode;
+    }
+
+    function authorizeContract(address contractAddress) external
+        requireContractOwner
+    {
+        authorizedContracts[contractAddress] = 1;
+    }
+
+    function deauthorizeContract(address contractAddress) external
+        requireContractOwner
+    {
+        delete authorizedContracts[contractAddress];
     }
 
     /********************************************************************************************/

@@ -3,7 +3,6 @@ pragma solidity >=0.4.24;
 // It's important to avoid vulnerabilities due to numeric overflow bugs
 // OpenZeppelin's SafeMath library, when used correctly, protects agains such bugs
 // More info: https://www.nccgroup.trust/us/about-us/newsroom-and-events/blog/2018/november/smart-contract-insecurity-bad-arithmetic/
-
 import "openzeppelin-solidity/contracts/utils/math/SafeMath.sol";
 
 /************************************************** */
@@ -87,12 +86,11 @@ contract FlightSuretyApp {
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
 
-    function isOperational() 
-                            public 
-                            pure 
-                            returns(bool) 
+    function isOperational() public 
+                             view
+                             returns(bool) 
     {
-        return true;  // Modify to call data contract's status
+        return dataContract.isOperational();
     }
 
     /********************************************************************************************/
