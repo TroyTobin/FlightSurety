@@ -19,7 +19,6 @@ contract FlightSuretyData {
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/
 
-
     /**
     * @dev Constructor
     *      The deploying account becomes contractOwner
@@ -44,7 +43,7 @@ contract FlightSuretyData {
     modifier requireIsOperational() 
     {
         require(operational, "Contract is currently not operational");
-        _;  // All modifiers require an "_" which indicates where the function body will be added
+        _;
     }
 
     /**
@@ -60,6 +59,7 @@ contract FlightSuretyData {
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
 
+
     /**
     * @dev Get operating status of contract
     *
@@ -67,7 +67,7 @@ contract FlightSuretyData {
     */      
     function isOperational() public 
                              view 
-                             returns(bool) 
+                             returns(bool)
     {
         return operational;
     }
@@ -79,19 +79,19 @@ contract FlightSuretyData {
     * When operational mode is disabled, all write transactions except for this one will fail
     */    
     function setOperatingStatus(bool mode) external
-        requireContractOwner 
+        requireContractOwner()
     {
         operational = mode;
     }
 
     function authorizeContract(address contractAddress) external
-        requireContractOwner
+        requireContractOwner()
     {
         authorizedContracts[contractAddress] = 1;
     }
 
     function deauthorizeContract(address contractAddress) external
-        requireContractOwner
+        requireContractOwner()
     {
         delete authorizedContracts[contractAddress];
     }
