@@ -346,8 +346,6 @@ interface FlightSuretyData {
                              view
                              returns(bool);
 
-    function setOperatingStatus(bool mode) external;
-
     function registerAirline() external
                                pure;
     
@@ -363,6 +361,4 @@ interface FlightSuretyData {
     function fund() external
                     payable;
 
-    receive() external
-              payable;
 }
