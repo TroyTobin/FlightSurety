@@ -12,6 +12,15 @@ contract FlightSuretyApp {
     using SafeMath for uint256; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)
 
     /********************************************************************************************/
+    /*                                         CONSTANTS                                        */
+    /********************************************************************************************/
+    // define the number of airlines that can be registered before
+    // voting must occur
+    uint8 private constant NUM_AIRLINES_BEFORE_VOTE = 4;
+    uint8 private constant PERCENTAGE_AIRLINES_CONCENSUS = 50;
+
+
+    /********************************************************************************************/
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
 
@@ -68,6 +77,27 @@ contract FlightSuretyApp {
         _;
     }
 
+    /**
+    * @dev Modifier that requires an airline be registered
+    *
+    */
+    modifier requireAirlineIsRegistered()
+    {
+        require(dataContract.isAirline(msg.sender), "Airline is not registered");
+        _;
+    }
+
+    /**
+    * @dev Modifier that requires an airline is funded
+    *
+    */
+    modifier requireAirlineIsFunded()
+    {
+        require(dataContract.isAirlineFunded(msg.sender), "Airline is not funded");
+        _;
+    }
+
+
     /********************************************************************************************/
     /*                                       CONSTRUCTOR                                        */
     /********************************************************************************************/
@@ -96,22 +126,67 @@ contract FlightSuretyApp {
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
-
+   /**
+    * @dev Add an airline to the registration queue
+    *
+    */   
+    function registerFirstAirline(address newAirline, string memory name) external
+                                                                          returns(bool success)
+    {
+        return dataContract.registerFirstAirline(newAirline, name);
+    }
   
    /**
     * @dev Add an airline to the registration queue
     *
     */   
-    function registerAirline
-                            (   
-                            )
-                            external
-                            pure
-                            returns(bool success, uint256 votes)
+    function registerAirline(address newAirline, string memory name) external
+                                                                     requireAirlineIsRegistered()
+                                                                     requireAirlineIsFunded()
+                                                                     returns(bool success, uint256 votes)
     {
-        return (success, 0);
+        votes = 0;
+        success = false;
+        bool register = false;
+
+        // If there are less than a set amount of airlines registered
+        // simply add
+        // Otherwise we need to get a consensus amongst all
+        // currently registered airlines to proceed
+        uint256 numAirlines = dataContract.numRegisteredAirlines();
+        if (numAirlines <= NUM_AIRLINES_BEFORE_VOTE)
+        {
+            register = true;
+        }
+        else
+        {
+            votes = dataContract.votesToRegisterAirline(newAirline);
+            // Get the votes amongst the registered airlines for the given airline
+            if (SafeMath.div(SafeMath.mul(100, votes), numAirlines) >= PERCENTAGE_AIRLINES_CONCENSUS)
+            {
+              register = true;  
+            }
+        }
+
+        // Airline is good to be registered
+        if (register)
+        {
+            success = dataContract.registerAirline(newAirline, name);
+        }
+
+        return (success, votes);
     }
 
+
+   /**
+    * @dev Fund an airline - which is required before it participate in contract 
+    *
+    */
+    function fundAirline(address payable airline) external
+                                                  payable
+    {
+        dataContract.fundAirline(airline, msg.value);
+    }
 
    /**
     * @dev Register a future flight for insuring.
@@ -346,8 +421,29 @@ interface FlightSuretyData {
                              view
                              returns(bool);
 
-    function registerAirline() external
-                               pure;
+    function registerFirstAirline(address firstAirline, string memory firstAirlineName) external
+                                                                                        returns (bool success);
+
+    function registerAirline(address newAirline, string memory name) external
+                                                                     returns (bool success);
+
+    function fundAirline(address payable airline, uint256 value) external
+                                                                 payable;
+
+    function isAirline(address a) external 
+                                  view 
+                                  returns(bool);
+                                      
+    function isAirlineFunded(address a) external
+                                        view
+                                        returns(bool);
+
+    function numRegisteredAirlines() external
+                                     view
+                                     returns(uint256);
+    
+    function votesToRegisterAirline(address newAirline) external
+                                                        returns(uint256);
     
     function buy() external
                    payable;

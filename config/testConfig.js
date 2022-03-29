@@ -23,11 +23,14 @@ var Config = async function(accounts) {
 
     let owner = accounts[0];
     let firstAirline = accounts[1];
+    let firstAirlineName = "Numero Uno Airways";
 
     let flightSuretyData = await FlightSuretyData.new({from:owner});
-    let flightSuretyApp = await FlightSuretyApp.new(flightSuretyData.address, {from:owner});
+    let flightSuretyApp  = await FlightSuretyApp.new(flightSuretyData.address, {from:owner});
 
-    
+    await flightSuretyData.authorizeContract(flightSuretyApp.address);
+    await flightSuretyApp.registerFirstAirline(firstAirline, firstAirlineName);
+
     return {
         owner: owner,
         firstAirline: firstAirline,
