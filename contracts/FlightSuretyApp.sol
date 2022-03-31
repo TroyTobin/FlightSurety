@@ -143,10 +143,10 @@ contract FlightSuretyApp {
     function registerAirline(address newAirline, string memory name) external
                                                                      requireAirlineIsRegistered()
                                                                      requireAirlineIsFunded()
-                                                                     returns(bool success, uint256 votes)
+                                                                     returns(bool success)
     {
-        votes = 0;
         success = false;
+        uint256 votes = 0;
         bool register = false;
 
         // If there are less than a set amount of airlines registered
@@ -174,7 +174,7 @@ contract FlightSuretyApp {
             success = dataContract.registerAirline(newAirline, name);
         }
 
-        return (success, votes);
+        return success;
     }
 
 

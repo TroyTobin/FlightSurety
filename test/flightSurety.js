@@ -61,10 +61,31 @@ contract('Flight Surety Tests', async (accounts) => {
 
   it('(airline) cannot register an Airline using registerAirline() if it is not funded', async () => {
     
-    // ARRANGE
+    // Try to register a new Airline
     let newAirline = accounts[2];
 
+    // Should fail with revert as "requirement" is not met - first airline is not funded
     await truffleAssert.reverts(config.flightSuretyApp.registerAirline(newAirline, "airTest", {from: config.firstAirline}));
+
+  });
+
+  it('(airline) can register an Airline using registerAirline() if it is funded', async () => {
+    
+    // Try to register a new Airline
+    let newAirline = accounts[2];
+
+    // Fund the first airline
+    let funding = web3.utils.toWei(web3.utils.toBN(10), "ether")
+    await config.flightSuretyApp.fundAirline(config.firstAirline, {from:config.firstAirline, value:funding});
+
+    let numAirlines = await config.flightSuretyData.numRegisteredAirlines();
+    assert.equal(numAirlines, 1, "First airline is not registered for some reason");      
+
+    // Should succeed with "requirement" is now met for first airline - which is now funded
+    await config.flightSuretyApp.registerAirline(newAirline, "airTest", {from: config.firstAirline});
+
+    numAirlines = await config.flightSuretyData.numRegisteredAirlines();
+    assert.equal(numAirlines, 2, "Funded airline failed to register additional airline");  
 
   });
 });
