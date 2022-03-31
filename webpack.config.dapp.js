@@ -37,11 +37,22 @@ module.exports = {
     })
   ],
   resolve: {
-    extensions: [".js"]
+    extensions: [".js"],
+    fallback: {
+      "assert": false,
+      "crypto": false,
+      "http": false,
+      "https": false,
+      "os": false,
+      "stream": false,
+      "url": false
+    } 
   },
   devServer: {
-    contentBase: path.join(__dirname, "dapp"),
+    static: path.join(__dirname, "dapp"),
     port: 8000,
-    stats: "minimal"
-  }
+    devMiddleware: {
+      stats: "minimal"
+    }
+  },
 };
