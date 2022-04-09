@@ -32,17 +32,24 @@
     "file-loader": "6.2.0",
     "html-loader": "3.1.0",
     "html-webpack-plugin": "^5.5.0",
+    "https-browserify": "^1.0.0",
     "openzeppelin-solidity": "^4.5.0",
+    "os-browserify": "^0.3.0",
     "start-server-webpack-plugin": "2.2.5",
+    "stream-http": "^3.2.0",
     "style-loader": "^3.3.1",
     "superstatic": "7.1.0",
     "truffle": "5.5.5",
     "truffle-assertions": "^0.9.2",
+    "url": "^0.11.0",
     "web3": "1.7.1",
-    "webpack": "^5.70.0",
+    "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "4.7.4",
-    "webpack-node-externals": "3.0.0"
-  },
-  "dependencies": {}
+    "webpack-dev-server": "^4.8.1",
+    "webpack-node-externals": "3.0.0",
+    "assert": "^2.0.0",
+    "crypto-browserify": "^3.12.0",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0"
+  }
 }
