@@ -2,11 +2,12 @@
 var Test = require('../config/testConfig.js');
 var BigNumber = require('bignumber.js');
 const truffleAssert = require('truffle-assertions');
+const assert = require('assert');
 
 contract('Flight Surety Tests', async (accounts) => {
 
   var config;
-  before('setup contract', async () => {
+  beforeEach('setup contract', async () => {
     config = await Test.Config(accounts);
   });
 
@@ -86,6 +87,48 @@ contract('Flight Surety Tests', async (accounts) => {
 
     numAirlines = await config.flightSuretyData.numRegisteredAirlines();
     assert.equal(numAirlines, 2, "Funded airline failed to register additional airline");  
+
+  });
+
+  it('(airline) can register upto 4 Airlines before voting is required', async () => {
+    
+    // Try to register a new Airline
+    let newAirline1 = accounts[2];
+    let newAirline2 = accounts[3];
+    let newAirline3 = accounts[4];
+    let newAirline4 = accounts[5];
+    let newAirline5 = accounts[6];
+
+    // Fund the first airline
+    let funding = web3.utils.toWei(web3.utils.toBN(10), "ether")
+    await config.flightSuretyApp.fundAirline(config.firstAirline, {from:config.firstAirline, value:funding});
+
+    let numAirlines = await config.flightSuretyData.numRegisteredAirlines();
+    assert.equal(numAirlines, 1, "First airline is not registered for some reason");      
+
+    // Should succeed as the first airline is funded and is able to register airlines until there are 5 in total
+    // From FlightSuretyApp.sol:    uint8 private constant NUM_AIRLINES_BEFORE_VOTE = 4;
+    await config.flightSuretyApp.registerAirline(newAirline1, "airTest_additional_1", {from: config.firstAirline});
+    numAirlines = await config.flightSuretyData.numRegisteredAirlines();
+    assert.equal(numAirlines, 2, "Failed to register additional airline number 1 (number reported)");
+
+    await config.flightSuretyApp.registerAirline(newAirline2, "airTest_additional_2", {from: config.firstAirline});
+    numAirlines = await config.flightSuretyData.numRegisteredAirlines();
+    assert.equal(numAirlines, 3, "Failed to register additional airline number 2 (number reported)");
+
+    await config.flightSuretyApp.registerAirline(newAirline3, "airTest_additional_3", {from: config.firstAirline});
+    numAirlines = await config.flightSuretyData.numRegisteredAirlines();
+    assert.equal(numAirlines, 4, "Failed to register additional airline number 3 (number reported)");
+
+    await config.flightSuretyApp.registerAirline(newAirline4, "airTest_additional_4", {from: config.firstAirline});
+    numAirlines = await config.flightSuretyData.numRegisteredAirlines();
+    assert.equal(numAirlines, 5, "Failed to register additional airline number 4 (number reported)");
+
+    // Any additional airlines need voting to succeed
+    // Nothing is voted though, so should fail
+    await config.flightSuretyApp.registerAirline(newAirline5, "airTest_additional_5", {from: config.firstAirline});
+    numAirlines = await config.flightSuretyData.numRegisteredAirlines();
+    assert.equal(numAirlines, 5, "Registering additional airline number 5 should have failed since there has been no voting (number reported)");
 
   });
 });

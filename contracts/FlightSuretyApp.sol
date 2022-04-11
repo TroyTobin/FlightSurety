@@ -138,7 +138,8 @@ contract FlightSuretyApp {
   
    /**
     * @dev Add an airline to the registration queue
-    *
+    * 
+    * Only registered and funded airlines can register another
     */   
     function registerAirline(address newAirline, string memory name) external
                                                                      requireAirlineIsRegistered()
@@ -160,7 +161,7 @@ contract FlightSuretyApp {
         }
         else
         {
-            votes = dataContract.votesToRegisterAirline(newAirline);
+            votes = dataContract.votesSupportingAirlineRegistration(newAirline);
             // Get the votes amongst the registered airlines for the given airline
             if (SafeMath.div(SafeMath.mul(100, votes), numAirlines) >= PERCENTAGE_AIRLINES_CONCENSUS)
             {
@@ -176,6 +177,20 @@ contract FlightSuretyApp {
 
         return success;
     }
+
+    /**
+     * @dev Register a vote to to support registration of an airline
+     *
+     * Only registered and funded airlines can vote in support of registering another airline
+     */
+     function voteToRegisterAirline(address newAirline) external
+                                                        requireAirlineIsRegistered()
+                                                        requireAirlineIsFunded()
+                                                     
+     {
+         dataContract.voteToRegisterAirline(newAirline);
+
+     }
 
 
    /**
@@ -442,8 +457,10 @@ interface FlightSuretyData {
                                      view
                                      returns(uint256);
     
-    function votesToRegisterAirline(address newAirline) external
-                                                        returns(uint256);
+    function votesSupportingAirlineRegistration(address newAirline) external
+                                                                    returns(uint256);
+    
+    function voteToRegisterAirline(address newAirline) external;
     
     function buy() external
                    payable;

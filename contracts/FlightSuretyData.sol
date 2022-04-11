@@ -31,6 +31,7 @@ contract FlightSuretyData {
         string name;
         uint256 updatedTimestamp;
         uint256 funding;
+        uint256 registrationVotes;
     }
     mapping(address => Airline) private airlines;
 
@@ -204,6 +205,7 @@ contract FlightSuretyData {
         a.name = firstAirlineName;
         a.updatedTimestamp = block.timestamp;
         a.funding = 0 ether;
+        a.registrationVotes = 0;
 
         registeredAirlines++;
 
@@ -224,6 +226,7 @@ contract FlightSuretyData {
         a.name = name;
         a.updatedTimestamp = block.timestamp;
         a.funding = 0 ether;
+        a.registrationVotes = 0;
 
         registeredAirlines++;
 
@@ -254,17 +257,32 @@ contract FlightSuretyData {
         return registeredAirlines;
     }
 
+
+    /**
+     * @dev Register a vote to to support registration of an airline
+     *
+     * Only registered and funded airlines can vote in support of registering another airline
+     */
+     function voteToRegisterAirline(address newAirline) external
+                                                        requireAuthorizedContract()
+                                                     
+     {   
+        Airline storage a = airlines[newAirline];
+        a.registrationVotes += 1;
+
+     }
+
    /**
-    * @dev Return the number of registered airlines
+    * @dev Return the number of votes supporting airline registration
     *
     */
-    function votesToRegisterAirline(address newAirline) external
-                                                        pure
-                                                        returns(uint256)
+    function votesSupportingAirlineRegistration(address newAirline) external
+                                                                    view
+                                                                    returns(uint256)
     {
-        // noop
-        newAirline;
-        return (0);
+
+        Airline storage a = airlines[newAirline];
+        return a.registrationVotes;
     }
 
    /**
