@@ -188,7 +188,7 @@ contract FlightSuretyApp {
                                                         requireAirlineIsFunded()
                                                      
      {
-         dataContract.voteToRegisterAirline(newAirline);
+         dataContract.voteToRegisterAirline(newAirline, msg.sender);
 
      }
 
@@ -460,7 +460,7 @@ interface FlightSuretyData {
     function votesSupportingAirlineRegistration(address newAirline) external
                                                                     returns(uint256);
     
-    function voteToRegisterAirline(address newAirline) external;
+    function voteToRegisterAirline(address newAirline, address voter) external;
     
     function buy() external
                    payable;

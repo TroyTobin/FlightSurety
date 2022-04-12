@@ -130,5 +130,33 @@ contract('Flight Surety Tests', async (accounts) => {
     numAirlines = await config.flightSuretyData.numRegisteredAirlines();
     assert.equal(numAirlines, 5, "Registering additional airline number 5 should have failed since there has been no voting (number reported)");
 
+
+    // Fund airlines and vote
+    await config.flightSuretyApp.fundAirline(newAirline1, {from:newAirline1, value:funding});
+    await config.flightSuretyApp.fundAirline(newAirline2, {from:newAirline2, value:funding});
+    await config.flightSuretyApp.fundAirline(newAirline3, {from:newAirline3, value:funding});
+    await config.flightSuretyApp.fundAirline(newAirline4, {from:newAirline4, value:funding});
+
+
+    // Vote for new airline to be registered
+    await config.flightSuretyApp.voteToRegisterAirline(newAirline5, {from: config.firstAirline});
+    // Only 1 voted though, so should fail
+    await config.flightSuretyApp.registerAirline(newAirline5, "airTest_additional_5", {from: config.firstAirline});
+    numAirlines = await config.flightSuretyData.numRegisteredAirlines();
+    assert.equal(numAirlines, 5, "Registering additional airline number 5 should have failed since there has been only 1 vote (number reported)");
+
+    await config.flightSuretyApp.voteToRegisterAirline(newAirline5, {from: newAirline1});
+    // Only 2 voted though, so should fail
+    await config.flightSuretyApp.registerAirline(newAirline5, "airTest_additional_5", {from: config.firstAirline});
+    numAirlines = await config.flightSuretyData.numRegisteredAirlines();
+    assert.equal(numAirlines, 5, "Registering additional airline number 5 should have failed since there has been only 2 votes (number reported)");
+
+    await config.flightSuretyApp.voteToRegisterAirline(newAirline5, {from: newAirline2});
+    // 3 voted, so should pass
+    await config.flightSuretyApp.registerAirline(newAirline5, "airTest_additional_5", {from: config.firstAirline});
+    numAirlines = await config.flightSuretyData.numRegisteredAirlines();
+    assert.equal(numAirlines, 6, "Registering additional airline number 5 should have succeeded since there has been 3 votes (>50%) (number reported)");
+
+
   });
 });

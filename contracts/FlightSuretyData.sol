@@ -21,8 +21,6 @@ contract FlightSuretyData {
 
     mapping(address => uint256) private authorizedContracts;
 
-
-    
     /********************************************************************************************/
     /*                                       DATA STRUCTURES                                    */
     /********************************************************************************************/
@@ -32,6 +30,7 @@ contract FlightSuretyData {
         uint256 updatedTimestamp;
         uint256 funding;
         uint256 registrationVotes;
+        mapping(address => bool) voters;
     }
     mapping(address => Airline) private airlines;
 
@@ -94,6 +93,16 @@ contract FlightSuretyData {
     modifier requireZeroRegisteredAirlines()
     {
         require(numRegisteredAirlines() == 0, "There are > 0 airlines registered already");
+        _;
+    }
+
+    /**
+    * @dev Modifier that requires a voting airline has not yet voted
+    *
+    */
+    modifier requireVoterNotVoted(address airline, address voter)
+    {
+        require(airlines[airline].voters[voter] == false, "Airline has already voted");
         _;
     }
 
@@ -263,12 +272,14 @@ contract FlightSuretyData {
      *
      * Only registered and funded airlines can vote in support of registering another airline
      */
-     function voteToRegisterAirline(address newAirline) external
-                                                        requireAuthorizedContract()
+     function voteToRegisterAirline(address newAirline, address voter) external
+                                                                       requireAuthorizedContract()
+                                                                       requireVoterNotVoted(newAirline, voter)
                                                      
      {   
         Airline storage a = airlines[newAirline];
         a.registrationVotes += 1;
+        a.voters[voter] = true;
 
      }
 
