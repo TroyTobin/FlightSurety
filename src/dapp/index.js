@@ -13,7 +13,8 @@ import './flightsurety.css';
         // Read transaction
         contract.isOperational((error, result) => {
             console.log(error,result);
-            display('Operational Status', 'Check if contract is operational', [ { label: 'Operational Status', error: error, value: result} ]);
+            display('Operational Status', 'Check if contract is operational', 
+                    [ { label: 'Operational Status', error: error, value: result} ]);
         });
     
 
@@ -26,9 +27,33 @@ import './flightsurety.css';
             });
         })
     
-    });
+
+        // User-submitted transaction
+        DOM.elid('fund-airline').addEventListener('click', () => {
+            let fundAddress = DOM.elid('airlineFundAddress').value;
+            let fundAmount = DOM.elid('airlineFundAmount').value;
+            // Write transaction
+            contract.fundAirline(fundAddress, fundAmount, (error, result) => {
+                console.log("fund", error, result);
+            });
+        })
     
 
+        // User-submitted transaction
+        DOM.elid('register-airline').addEventListener('click', () => {
+            let registrarAirlineAddress = DOM.elid('registrarAirlineAddress').value;
+            let newAirlineAddress = DOM.elid('airlineAddress').value;
+            let newAirlineName = DOM.elid('airlineName').value;
+            // Write transaction
+            contract.registerAirline(registrarAirlineAddress, newAirlineAddress, newAirlineName, (error, result) => {
+                console.log("register", error, result);
+                contract.numRegisteredAirlines((error, result) => {
+                    console.log(error,result);
+                    DOM.elid("numAirlines").innerText = result;
+                });
+            });
+        })
+    });
 })();
 
 

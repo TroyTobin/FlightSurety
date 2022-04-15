@@ -4,8 +4,19 @@ body {
     background-size: cover;
 }
 
+.controls {
+    width: 100%; 
+    overflow: hidden;
+}
+
+.left {
+    width: 600px; 
+    float: left;
+}
+
 .container {
-    margin-top: 400px;
+    max-width: 90%; 
+    margin-top: 200px;
     background-color: #000;
     opacity: 0.9;
     color: #fff;
@@ -34,7 +45,7 @@ section {
 }
 
 label.form {
-    font-size: 14px;
+    font-size: 25px;
     margin-right: 20px;
 }
 input {

@@ -14,18 +14,94 @@
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <a class="navbar-brand" href="#">FlightSurety</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
-            aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" 
+                data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+                aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
     </nav>
 
     <main class="container">
-
-        <div id="display-wrapper" class="top-20">
+        <div class="row">
+            <div class="col-sm top-20">
+                <label>Number Airlines Registered</label>
+            </div>
+            <div class="col-sm top-20">
+                <label id="numAirlines">0</label>
+            </div>
         </div>
-        <div class="row top-20">
-            <label class="form">Flight</label> <input type="text" id="flight-number"> <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
+        <div class="row">
+            <div class="col-sm top-20">
+                <div id="display-wrapper" class="top-20"></div>
+                <div class="top-20">
+                    <label class="form">Flight</label>
+                    <input type="text" id="flight-number"> 
+                    <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
+                </div>
+            </div>
+
+            <div class="col-sm top-20">
+                <div class="top-20">
+                    <form>
+                        <label class="form">Fund Airline</label>
+                        <div class="form-group row">
+                            <label for="airlineFundAddress" class="col-sm-4 col-form-label">Airline Address</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="airlineFundAddress" placeholder="address">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="airlineFundAmount" class="col-sm-4 col-form-label">Amount</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="airlineFundAmount" placeholder="address">
+                            </div>
+                        </div>
+                        <btn class="btn btn-primary" id="fund-airline">Fund</btn>
+                    </form>
+                </div>
+                <div class="top-20">
+                    <form>
+                        <label class="form">Register Airline</label>
+                        <div class="form-group row">
+                            <label for="registrarAirlineAddress" class="col-sm-4 col-form-label">Registrar Airline Address</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="registrarAirlineAddress" placeholder="address">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="airlineAddress" class="col-sm-4 col-form-label">Airline Address</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="airlineAddress" placeholder="address">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="airlineName" class="col-sm-4 col-form-label">Airline Name</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="airlineName" placeholder="name">
+                            </div>
+                         </div>
+                         <btn class="btn btn-primary" id="register-airline">Register</btn>
+                    </form>
+                </div>
+                <div class="top-20">
+                    <form>
+                        <label class="form">Vote For Airline</label>
+                        <div class="form-group row">
+                            <label for="airlineAddress" class="col-sm-4 col-form-label">Airline Address</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="airlineAddress" placeholder="address">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="votingAirlineAddress" class="col-sm-4 col-form-label">Voting Airline Address</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="votingAirlineAddress" placeholder="address">
+                            </div>
+                         </div>
+                         <btn class="btn btn-primary" id="vote-airline">Vote</btn>
+                    </form>
+                </div>
+            </div>
         </div>
     </main>
 

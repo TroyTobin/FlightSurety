@@ -83,7 +83,7 @@ contract FlightSuretyApp {
     */
     modifier requireAirlineIsRegistered()
     {
-        require(dataContract.isAirline(msg.sender), "Airline is not registered");
+        require(dataContract.isAirline(msg.sender), "Airline is not registeredwewe");
         _;
     }
 
@@ -94,6 +94,17 @@ contract FlightSuretyApp {
     modifier requireAirlineIsFunded()
     {
         require(dataContract.isAirlineFunded(msg.sender), "Airline is not funded");
+        _;
+    }
+
+
+    /**
+    * @dev Modifier that requires the airline is the caller
+    *
+    */
+    modifier requireAirlineIsCaller(address payable airline)
+    {
+        require(msg.sender == airline, "Airline is not the caller");
         _;
     }
 
@@ -134,6 +145,18 @@ contract FlightSuretyApp {
                                                                           returns(bool success)
     {
         return dataContract.registerFirstAirline(newAirline, name);
+    }
+
+    /**
+     * @dev Return the number of airlines registered
+     *
+     */
+     function numRegisteredAirlines() external
+                                      view
+                                      returns (uint256)
+    {
+        return dataContract.numRegisteredAirlines();
+                                          
     }
   
    /**
@@ -199,6 +222,7 @@ contract FlightSuretyApp {
     */
     function fundAirline(address payable airline) external
                                                   payable
+                                                  requireAirlineIsCaller(airline)
     {
         dataContract.fundAirline(airline, msg.value);
     }
