@@ -3,7 +3,6 @@ import DOM from './dom';
 import Contract from './contract';
 import './flightsurety.css';
 
-
 (async() => {
 
     let result = null;
@@ -29,9 +28,18 @@ import './flightsurety.css';
     
 
         // User-submitted transaction
+        DOM.elid('airline-info').addEventListener('click', () => {
+            let infoAddress = DOM.elid('airlineInfoAddress').value;
+            contract.airlineFunding(infoAddress, (error, result) => {
+                DOM.elid("airlineInfoFunding").innerHTML = contract.weiToEther(result);
+            });
+        })
+    
+
+        // User-submitted transaction
         DOM.elid('fund-airline').addEventListener('click', () => {
             let fundAddress = DOM.elid('airlineFundAddress').value;
-            let fundAmount = DOM.elid('airlineFundAmount').value;
+            let fundAmount  = DOM.elid('airlineFundAmount').value;
             // Write transaction
             contract.fundAirline(fundAddress, fundAmount, (error, result) => {
                 console.log("fund", error, result);

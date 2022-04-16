@@ -83,7 +83,7 @@ contract FlightSuretyApp {
     */
     modifier requireAirlineIsRegistered()
     {
-        require(dataContract.isAirline(msg.sender), "Airline is not registeredwewe");
+        require(dataContract.isAirline(msg.sender), "Airline is not registered");
         _;
     }
 
@@ -215,6 +215,18 @@ contract FlightSuretyApp {
 
      }
 
+
+   /**
+    * @dev Get airline finding 
+    *
+    */
+    function airlineFunding(address payable airline) external
+                                             view
+                                            //  requireAirlineIsCaller(airline)
+                                             returns (uint256)
+    {
+        return dataContract.airlineFunding(airline);
+    }
 
    /**
     * @dev Fund an airline - which is required before it participate in contract 
@@ -468,6 +480,10 @@ interface FlightSuretyData {
 
     function fundAirline(address payable airline, uint256 value) external
                                                                  payable;
+
+    function airlineFunding(address airline) external
+                                             view
+                                             returns (uint256);
 
     function isAirline(address a) external 
                                   view 

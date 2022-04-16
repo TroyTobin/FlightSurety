@@ -33,6 +33,11 @@ export default class Contract {
         });
     }
 
+    weiToEther(wei)
+    {
+        return this.web3.utils.fromWei(wei, "ether");
+    }
+
     isOperational(callback) {
        let self = this;
        self.flightSuretyApp.methods
@@ -61,11 +66,24 @@ export default class Contract {
     }
 
 
+    async airlineFunding(airline, callback) {
+        let self = this;
+        let payload = {
+            airline: airline,
+            timestamp: Math.floor(Date.now() / 1000)
+        } 
+        let funding = await  self.flightSuretyApp.methods.airlineFunding(payload.airline);
+        self.flightSuretyApp.methods
+            .airlineFunding(payload.airline)
+            .call({from: payload.airline}, callback)
+    }
+
+
     fundAirline(airlineToFund, value, callback) {
         let self = this;
         let payload = {
             airline: airlineToFund,
-            value: value,
+            value:  this.web3.utils.toWei(this.web3.utils.toBN(value), "ether"),
             timestamp: Math.floor(Date.now() / 1000)
         } 
         self.flightSuretyApp.methods
@@ -82,8 +100,8 @@ export default class Contract {
             name: newAirlineName,
         } 
 
-        console.log(payload);
-        console.log (self.owner);
+        console.log("register airline, payload", payload);
+        console.log ("Owner", self.owner);
         self.flightSuretyApp.methods
             .registerAirline(payload.airline, payload.name)
             .send({ from: registrarAirlineAddress}, (error, result) => {

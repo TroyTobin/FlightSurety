@@ -251,9 +251,22 @@ contract FlightSuretyData {
                                                                  payable
     {
         Airline storage a = airlines[airline];
-        a.funding = value;
+        a.funding += value;
     }
 
+
+
+   /**
+    * @dev Fund an airline - which is required before it participate in contract 
+    *
+    */
+    function airlineFunding(address airline) external
+                                             view
+                                             returns (uint256)
+    {
+        Airline storage a = airlines[airline];
+        return a.funding;
+    }
 
    /**
     * @dev Return the number of registered airlines
