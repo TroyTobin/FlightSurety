@@ -27,7 +27,7 @@ contract FlightSuretyData {
     struct Airline {
         bool isRegistered;
         string name;
-        uint256 updatedTimestamp;
+        uint   updatedTimestamp;
         uint256 funding;
         uint256 registrationVotes;
         mapping(address => bool) voters;

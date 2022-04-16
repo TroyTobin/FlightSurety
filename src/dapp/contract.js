@@ -8,6 +8,7 @@ export default class Contract {
         let config = Config[network];
         this.web3 = new Web3(new Web3.providers.HttpProvider(config.url));
         this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
+        this.flightSuretyApp.options.gas = 200000;
         this.initialize(callback);
         this.owner = null;
         this.airlines = [];
@@ -31,6 +32,8 @@ export default class Contract {
 
             callback();
         });
+
+
     }
 
     weiToEther(wei)
@@ -50,7 +53,8 @@ export default class Contract {
         self.flightSuretyApp.methods
              .numRegisteredAirlines()
              .call({ from: self.owner}, callback);
-     }
+    }
+
     fetchFlightStatus(flight, callback) {
         let self = this;
         let payload = {
@@ -66,15 +70,26 @@ export default class Contract {
     }
 
 
-    async airlineFunding(airline, callback) {
+    airlineFunding(airline, callback) {
         let self = this;
         let payload = {
             airline: airline,
             timestamp: Math.floor(Date.now() / 1000)
         } 
-        let funding = await  self.flightSuretyApp.methods.airlineFunding(payload.airline);
         self.flightSuretyApp.methods
             .airlineFunding(payload.airline)
+            .call({from: payload.airline}, callback)
+    }
+
+
+    airlineVotes(airline, callback) {
+        let self = this;
+        let payload = {
+            airline: airline,
+            timestamp: Math.floor(Date.now() / 1000)
+        } 
+        self.flightSuretyApp.methods
+            .votesSupportingAirlineRegistration(payload.airline)
             .call({from: payload.airline}, callback)
     }
 
@@ -87,8 +102,23 @@ export default class Contract {
             timestamp: Math.floor(Date.now() / 1000)
         } 
         self.flightSuretyApp.methods
-            .fundAirline(payload.airline)
+            .fundAirline()
             .send({ from: payload.airline, value:payload.value}, (error, result) => {
+                callback(error, payload);
+            });
+    }
+
+
+    voteAirline(votingAirline, newAirline, callback) {
+        let self = this;    
+        let payload = {
+            newAirline: newAirline,
+            votingAirline: votingAirline,
+            timestamp: Math.floor(Date.now() / 1000)
+        } 
+        self.flightSuretyApp.methods
+            .voteToRegisterAirline(payload.newAirline)
+            .send({from: payload.votingAirline}, (error, result) => {
                 callback(error, payload);
             });
     }
@@ -100,12 +130,13 @@ export default class Contract {
             name: newAirlineName,
         } 
 
-        console.log("register airline, payload", payload);
-        console.log ("Owner", self.owner);
         self.flightSuretyApp.methods
             .registerAirline(payload.airline, payload.name)
-            .send({ from: registrarAirlineAddress}, (error, result) => {
-                callback(error, payload);
+            .send({from: registrarAirlineAddress}, (error, result) => {
+                callback(error, result);
+            })
+            .then(function(events){
+                callback(events.events["RegisterAirlineFailure"], events.events["RegisterAirlineSuccess"]);
             });
     }
 }

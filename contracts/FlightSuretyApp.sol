@@ -48,6 +48,11 @@ contract FlightSuretyApp {
     /********************************************************************************************/
     FlightSuretyData dataContract;
 
+    /********************************************************************************************/
+    /*                                       Events                                             */
+    /********************************************************************************************/
+    event RegisterAirlineSuccess(address airline);
+    event RegisterAirlineFailure(address airline);
  
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
@@ -81,6 +86,16 @@ contract FlightSuretyApp {
     * @dev Modifier that requires an airline be registered
     *
     */
+    modifier requireAirlineNotRegistered(address airline)
+    {
+        require(dataContract.isAirline(airline) == false, "Airline is already registered");
+        _;
+    }
+
+    /**
+    * @dev Modifier that requires an airline be registered
+    *
+    */
     modifier requireAirlineIsRegistered()
     {
         require(dataContract.isAirline(msg.sender), "Airline is not registered");
@@ -102,7 +117,7 @@ contract FlightSuretyApp {
     * @dev Modifier that requires the airline is the caller
     *
     */
-    modifier requireAirlineIsCaller(address payable airline)
+    modifier requireAirlineIsCaller(address airline)
     {
         require(msg.sender == airline, "Airline is not the caller");
         _;
@@ -165,6 +180,7 @@ contract FlightSuretyApp {
     * Only registered and funded airlines can register another
     */   
     function registerAirline(address newAirline, string memory name) external
+                                                                     requireAirlineNotRegistered(newAirline)
                                                                      requireAirlineIsRegistered()
                                                                      requireAirlineIsFunded()
                                                                      returns(bool success)
@@ -198,11 +214,35 @@ contract FlightSuretyApp {
             success = dataContract.registerAirline(newAirline, name);
         }
 
+        if (success == true)
+        {
+            emit RegisterAirlineSuccess(newAirline);
+        }
+        else
+        {
+            emit RegisterAirlineFailure(newAirline);
+        }
+
         return success;
     }
 
     /**
-     * @dev Register a vote to to support registration of an airline
+     * @dev Return the number of votes supporting registration of the airline
+     *
+     * Only registered and funded airlines can vote in support of registering another airline
+     */
+     function votesSupportingAirlineRegistration(address airline) external
+                                                                  view
+                                                                  requireAirlineIsCaller(airline)
+                                                                  returns(uint256)
+
+     {
+        return dataContract.votesSupportingAirlineRegistration(airline);
+
+     }
+
+    /**
+     * @dev Register a vote to to support registration of an airlin
      *
      * Only registered and funded airlines can vote in support of registering another airline
      */
@@ -222,7 +262,7 @@ contract FlightSuretyApp {
     */
     function airlineFunding(address payable airline) external
                                              view
-                                            //  requireAirlineIsCaller(airline)
+                                             requireAirlineIsCaller(airline)
                                              returns (uint256)
     {
         return dataContract.airlineFunding(airline);
@@ -232,11 +272,11 @@ contract FlightSuretyApp {
     * @dev Fund an airline - which is required before it participate in contract 
     *
     */
-    function fundAirline(address payable airline) external
-                                                  payable
-                                                  requireAirlineIsCaller(airline)
+    function fundAirline() external
+                           payable
+                           requireAirlineIsRegistered()
     {
-        dataContract.fundAirline(airline, msg.value);
+        dataContract.fundAirline(payable(msg.sender), msg.value);
     }
 
    /**
@@ -497,7 +537,8 @@ interface FlightSuretyData {
                                      view
                                      returns(uint256);
     
-    function votesSupportingAirlineRegistration(address newAirline) external
+    function votesSupportingAirlineRegistration(address airline) external
+                                                                    view
                                                                     returns(uint256);
     
     function voteToRegisterAirline(address newAirline, address voter) external;

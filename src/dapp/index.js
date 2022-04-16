@@ -16,11 +16,15 @@ import './flightsurety.css';
                     [ { label: 'Operational Status', error: error, value: result} ]);
         });
     
+        contract.numRegisteredAirlines((error, result) => {
+            console.log("Num registered", error,result);
+            DOM.elid("numAirlines").innerText = result;
+        });
 
         // User-submitted transaction
         DOM.elid('submit-oracle').addEventListener('click', () => {
             let flight = DOM.elid('flight-number').value;
-            // Write transaction
+
             contract.fetchFlightStatus(flight, (error, result) => {
                 display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
             });
@@ -33,6 +37,10 @@ import './flightsurety.css';
             contract.airlineFunding(infoAddress, (error, result) => {
                 DOM.elid("airlineInfoFunding").innerHTML = contract.weiToEther(result);
             });
+            contract.airlineVotes(infoAddress, (error, result) => {
+                console.log("votes", result);
+                DOM.elid("airlineInfoVotes").innerHTML = result;
+            });
         })
     
 
@@ -40,7 +48,7 @@ import './flightsurety.css';
         DOM.elid('fund-airline').addEventListener('click', () => {
             let fundAddress = DOM.elid('airlineFundAddress').value;
             let fundAmount  = DOM.elid('airlineFundAmount').value;
-            // Write transaction
+
             contract.fundAirline(fundAddress, fundAmount, (error, result) => {
                 console.log("fund", error, result);
             });
@@ -52,13 +60,32 @@ import './flightsurety.css';
             let registrarAirlineAddress = DOM.elid('registrarAirlineAddress').value;
             let newAirlineAddress = DOM.elid('airlineAddress').value;
             let newAirlineName = DOM.elid('airlineName').value;
-            // Write transaction
-            contract.registerAirline(registrarAirlineAddress, newAirlineAddress, newAirlineName, (error, result) => {
-                console.log("register", error, result);
-                contract.numRegisteredAirlines((error, result) => {
-                    console.log(error,result);
-                    DOM.elid("numAirlines").innerText = result;
-                });
+
+            contract.registerAirline(registrarAirlineAddress, newAirlineAddress, newAirlineName, (failure, success) => {
+                if (success != undefined)
+                {
+                    alert("Airline registered '" + newAirlineName + "' " + newAirlineAddress);
+                }
+                else
+                {
+                    alert("Airline failed registration '" + newAirlineName + "' " + newAirlineAddress);
+                }
+            });
+
+            contract.numRegisteredAirlines((error, result) => {
+                DOM.elid("numAirlines").innerText = result;
+            });
+        })
+
+        // User-submitted transaction
+        DOM.elid('vote-airline').addEventListener('click', () => {
+            let newAirlineAddress    = DOM.elid('voteeAirlineAddress').value;
+            let votingAirlineAddress = DOM.elid('votingAirlineAddress').value;
+
+            console.log("vote airline", newAirlineAddress, votingAirlineAddress)
+
+            contract.voteAirline(votingAirlineAddress, newAirlineAddress, (error, result) => {
+                console.log("vote", error, result);
             });
         })
     });

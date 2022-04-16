@@ -22,14 +22,7 @@
     </nav>
 
     <main class="container">
-        <div class="row">
-            <div class="col-sm top-20">
-                <label>Number Airlines Registered</label>
-            </div>
-            <div class="col-sm top-20">
-                <label id="numAirlines">0</label>
-            </div>
-        </div>
+
         <div class="row">
             <div class="col-sm top-20">
                 <div id="display-wrapper" class="top-20"></div>
@@ -41,6 +34,15 @@
             </div>
 
             <div class="col-sm top-20">
+                <h2>Airline Operations</h2>
+                <div class="row">
+                    <div class="col-sm-5 top-20">
+                        <label class="form">Number Airlines Registered:</label>
+                    </div>
+                    <div class="col-sm top-20">
+                        <label id="numAirlines">0</label>
+                    </div>
+                </div>
                 <div class="top-20">
                     <form>
                         <label class="form">Airline Information</label>
@@ -51,11 +53,11 @@
                             </div>
                             <label for="airlineInfoVotes" class="col-sm-4 col-form-label">Airline Votes</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="airlineInfoVotes" placeholder="0">
+                                <label type="text" class="form-control" id="airlineInfoVotes">0</label>
                             </div>
                             <label for="airlineInfoFunding" class="col-sm-4 col-form-label">Airline Funding (ether)</label>
                             <div class="col-sm-6">
-                                <label type="text" class="form-control" id="airlineInfoFunding" placeholder="0">0</label>
+                                <label type="text" class="form-control" id="airlineInfoFunding">0</label>
                             </div>
                         </div>
                         <btn class="btn btn-primary" id="airline-info">Get Info</btn>
@@ -107,9 +109,9 @@
                     <form>
                         <label class="form">Vote For Airline</label>
                         <div class="form-group row">
-                            <label for="airlineAddress" class="col-sm-4 col-form-label">Airline Address</label>
+                            <label for="voteeAirlineAddress" class="col-sm-4 col-form-label">Airline Address</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="airlineAddress" placeholder="address">
+                                <input type="text" class="form-control" id="voteeAirlineAddress" placeholder="address">
                             </div>
                         </div>
                         <div class="form-group row">
