@@ -139,4 +139,21 @@ export default class Contract {
                 callback(events.events["RegisterAirlineFailure"], events.events["RegisterAirlineSuccess"]);
             });
     }
+
+    registerFlight(registrarAirlineAddress, flightCode, flightStatus, callback) {
+        let self = this;
+        let payload = {
+            airline: registrarAirlineAddress,
+            flightCode: this.web3.utils.padLeft(this.web3.utils.asciiToHex(flightCode)),
+            flightStatus: flightStatus,
+        } 
+
+        self.flightSuretyApp.methods
+            .registerFlight(payload.flightCode, payload.flightStatus)
+            .send({from: registrarAirlineAddress}, (error, result) => {
+            })
+            .then(function(events){
+                callback(events.events["RegisterFlightFailure"], events.events["RegisterFlightSuccess"]);
+            });
+    }
 }

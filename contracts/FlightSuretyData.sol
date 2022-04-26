@@ -24,6 +24,8 @@ contract FlightSuretyData {
     /********************************************************************************************/
     /*                                       DATA STRUCTURES                                    */
     /********************************************************************************************/
+    
+    // Airlines
     struct Airline {
         bool isRegistered;
         string name;
@@ -36,6 +38,16 @@ contract FlightSuretyData {
 
     uint256 private registeredAirlines = 0;
 
+    // Flights
+    struct Flight {
+        bool isRegistered;
+        uint8 statusCode;
+        uint256 updatedTimestamp;        
+        address airline;
+    }
+    mapping(bytes32 => Flight) private flights;
+
+    uint256 private registeredFlights = 0;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -307,6 +319,27 @@ contract FlightSuretyData {
 
         Airline storage a = airlines[newAirline];
         return a.registrationVotes;
+    }
+
+
+       /**
+    * @dev Add an airline to the registration queue
+    *      Can only be called from FlightSuretyApp contract
+    *
+    */   
+    function registerFlight(bytes32 flightCode, uint8 status, address airline) external
+                                                                               requireAuthorizedContract()
+                                                                               returns (bool success)
+    {
+        Flight storage f = flights[flightCode];
+        f.isRegistered = true;
+        f.statusCode = status;
+        f.airline = airline;
+        f.updatedTimestamp = block.timestamp;
+
+        registeredFlights++;
+
+        return true;
     }
 
    /**

@@ -88,6 +88,29 @@ import './flightsurety.css';
                 console.log("vote", error, result);
             });
         })
+
+
+        // User-submitted transaction
+        DOM.elid('register-flight').addEventListener('click', () => {
+            let registrarAirlineAddress = DOM.elid('flightAirlineAddress').value;
+            let flightCode = DOM.elid('flightCode').value;
+            let flightStatus = parseInt(DOM.elid('flightInitialStatus').value, 10);
+
+            contract.registerFlight(registrarAirlineAddress, flightCode, flightStatus, (failure, success) => {
+                if (success != undefined)
+                {
+                    alert("Flight registered '" + flightCode + "' " + registrarAirlineAddress);
+                }
+                else
+                {
+                    alert("Flight failed registration '" + flightCode + "' " + registrarAirlineAddress);
+                }
+            });
+
+            contract.numRegisteredFlights((error, result) => {
+                DOM.elid("numFlight").innerText = result;
+            });
+        })
     });
 })();
 

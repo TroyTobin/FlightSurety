@@ -32,7 +32,51 @@
                     <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
                 </div>
             </div>
+        </div>
 
+        <div class="row">
+            <div class="col-sm top-20">
+                <h2>Flight Operations</h2>
+                <div class="row">
+                    <div class="col-sm-5 top-20">
+                        <label class="form">Number Flights Registered:</label>
+                    </div>
+                    <div class="col-sm top-20">
+                        <label id="numFlights">0</label>
+                    </div>
+                </div>
+                <div class="top-20">
+                    <form>
+                        <label class="form">Register Flight</label>
+                        <div class="form-group row">
+                            <label for="flightAirlineAddress" class="col-sm-4 col-form-label">Airline Address</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="flightAirlineAddress" placeholder="address">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="flightCode" class="col-sm-4 col-form-label">Flight Code</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="flightCode" placeholder="address">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="flightInitialStatus" class="col-sm-4 col-form-label">Flight Status</label>
+                            <div class="col-sm-6">
+                                <select id="flightInitialStatus" name="status">
+                                    <option value="0">Unknown</option>
+                                    <option value="10">On Time</option>
+                                    <option value="20">Late Airline</option>
+                                    <option value="30">Late Weather</option>
+                                    <option value="40">Late Technical</option>
+                                    <option value="50">Late Other</option>
+                                </select>
+                            </div>
+                         </div>
+                         <btn class="btn btn-primary" id="register-flight">Register</btn>
+                    </form>
+                </div>
+            </div>
             <div class="col-sm top-20">
                 <h2>Airline Operations</h2>
                 <div class="row">
