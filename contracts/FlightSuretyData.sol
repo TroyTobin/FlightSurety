@@ -332,6 +332,13 @@ contract FlightSuretyData {
                                                                                returns (bool success)
     {
         Flight storage f = flights[flightCode];
+
+        if (f.isRegistered == true)
+        {
+            // already registered
+            return false;
+        }
+
         f.isRegistered = true;
         f.statusCode = status;
         f.airline = airline;
@@ -340,6 +347,17 @@ contract FlightSuretyData {
         registeredFlights++;
 
         return true;
+    }
+
+   /**
+    * @dev Return the number of registered airlines
+    *
+    */
+    function numRegisteredFlights() public
+                                    view
+                                    returns(uint256)
+    {
+        return registeredFlights;
     }
 
    /**

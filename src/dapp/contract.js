@@ -156,4 +156,11 @@ export default class Contract {
                 callback(events.events["RegisterFlightFailure"], events.events["RegisterFlightSuccess"]);
             });
     }
+
+    numRegisteredFlights(callback) {
+        let self = this;
+        self.flightSuretyApp.methods
+             .numRegisteredFlights()
+             .call({ from: self.owner}, callback);
+    }
 }

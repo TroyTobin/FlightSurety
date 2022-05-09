@@ -274,6 +274,18 @@ contract FlightSuretyApp {
         dataContract.fundAirline(payable(msg.sender), msg.value);
     }
 
+    /**
+     * @dev Return the number of airlines registered
+     *
+     */
+     function numRegisteredFlights() external
+                                     view
+                                     returns (uint256)
+    {
+        return dataContract.numRegisteredFlights();
+                                          
+    }
+
    /**
     * @dev Register a future flight for insuring.
     *
@@ -550,6 +562,10 @@ interface FlightSuretyData {
     
     function registerFlight(bytes32 flightCode, uint8 status, address airline) external
                                                                                returns (bool success);
+
+    function numRegisteredFlights() external
+                                    view
+                                    returns(uint256);
     function buy() external
                    payable;
 

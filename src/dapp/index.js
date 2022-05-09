@@ -17,8 +17,14 @@ import './flightsurety.css';
         });
     
         contract.numRegisteredAirlines((error, result) => {
-            console.log("Num registered", error,result);
+            console.log("Num registered airlines", error, result);
             DOM.elid("numAirlines").innerText = result;
+        });
+
+
+        contract.numRegisteredFlights((error, result) => {
+            console.log("Num registered flights", error, result);
+            DOM.elid("numFlights").innerText = result;
         });
 
         // User-submitted transaction
@@ -56,12 +62,12 @@ import './flightsurety.css';
     
 
         // User-submitted transaction
-        DOM.elid('register-airline').addEventListener('click', () => {
+        DOM.elid('register-airline').addEventListener('click', async () => {
             let registrarAirlineAddress = DOM.elid('registrarAirlineAddress').value;
             let newAirlineAddress = DOM.elid('airlineAddress').value;
             let newAirlineName = DOM.elid('airlineName').value;
 
-            contract.registerAirline(registrarAirlineAddress, newAirlineAddress, newAirlineName, (failure, success) => {
+            await contract.registerAirline(registrarAirlineAddress, newAirlineAddress, newAirlineName, (failure, success) => {
                 if (success != undefined)
                 {
                     alert("Airline registered '" + newAirlineName + "' " + newAirlineAddress);
@@ -70,10 +76,10 @@ import './flightsurety.css';
                 {
                     alert("Airline failed registration '" + newAirlineName + "' " + newAirlineAddress);
                 }
-            });
 
-            contract.numRegisteredAirlines((error, result) => {
-                DOM.elid("numAirlines").innerText = result;
+                contract.numRegisteredAirlines((error, result) => {
+                    DOM.elid("numAirlines").innerText = result;
+                });
             });
         })
 
@@ -91,12 +97,12 @@ import './flightsurety.css';
 
 
         // User-submitted transaction
-        DOM.elid('register-flight').addEventListener('click', () => {
+        DOM.elid('register-flight').addEventListener('click', async () => {
             let registrarAirlineAddress = DOM.elid('flightAirlineAddress').value;
             let flightCode = DOM.elid('flightCode').value;
             let flightStatus = parseInt(DOM.elid('flightInitialStatus').value, 10);
 
-            contract.registerFlight(registrarAirlineAddress, flightCode, flightStatus, (failure, success) => {
+            await contract.registerFlight(registrarAirlineAddress, flightCode, flightStatus, (failure, success) => {
                 if (success != undefined)
                 {
                     alert("Flight registered '" + flightCode + "' " + registrarAirlineAddress);
@@ -105,10 +111,10 @@ import './flightsurety.css';
                 {
                     alert("Flight failed registration '" + flightCode + "' " + registrarAirlineAddress);
                 }
-            });
 
-            contract.numRegisteredFlights((error, result) => {
-                DOM.elid("numFlight").innerText = result;
+                contract.numRegisteredFlights((error, result) => {
+                    DOM.elid("numFlights").innerText = result;
+                });
             });
         })
     });
