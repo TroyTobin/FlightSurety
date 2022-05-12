@@ -77,7 +77,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
     // Fund the first airline
     let funding = web3.utils.toWei(web3.utils.toBN(10), "ether")
-    await config.flightSuretyApp.fundAirline(config.firstAirline, {from:config.firstAirline, value:funding});
+    await config.flightSuretyApp.fundAirline({from:config.firstAirline, value:funding});
 
     let numAirlines = await config.flightSuretyData.numRegisteredAirlines();
     assert.equal(numAirlines, 1, "First airline is not registered for some reason");      
@@ -101,7 +101,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
     // Fund the first airline
     let funding = web3.utils.toWei(web3.utils.toBN(10), "ether")
-    await config.flightSuretyApp.fundAirline(config.firstAirline, {from:config.firstAirline, value:funding});
+    await config.flightSuretyApp.fundAirline({from:config.firstAirline, value:funding});
 
     let numAirlines = await config.flightSuretyData.numRegisteredAirlines();
     assert.equal(numAirlines, 1, "First airline is not registered for some reason");      
@@ -132,10 +132,10 @@ contract('Flight Surety Tests', async (accounts) => {
 
 
     // Fund airlines and vote
-    await config.flightSuretyApp.fundAirline(newAirline1, {from:newAirline1, value:funding});
-    await config.flightSuretyApp.fundAirline(newAirline2, {from:newAirline2, value:funding});
-    await config.flightSuretyApp.fundAirline(newAirline3, {from:newAirline3, value:funding});
-    await config.flightSuretyApp.fundAirline(newAirline4, {from:newAirline4, value:funding});
+    await config.flightSuretyApp.fundAirline({from:newAirline1, value:funding});
+    await config.flightSuretyApp.fundAirline({from:newAirline2, value:funding});
+    await config.flightSuretyApp.fundAirline({from:newAirline3, value:funding});
+    await config.flightSuretyApp.fundAirline({from:newAirline4, value:funding});
 
 
     // Vote for new airline to be registered
