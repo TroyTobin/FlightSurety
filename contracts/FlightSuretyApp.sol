@@ -347,7 +347,7 @@ contract FlightSuretyApp {
     } 
 
 
-// region ORACLE MANAGEMENT
+    // region ORACLE MANAGEMENT
 
     // Incremented to add pseudo-randomness at various points
     uint8 private nonce = 0;    
@@ -389,37 +389,32 @@ contract FlightSuretyApp {
     // Event fired when flight status request is submitted
     // Oracles track this and if they have a matching index
     // they fetch data and submit a response
-    event OracleRequest(uint8 index, address airline, string flight, uint256 timestamp);
+    event OracleRequest(uint256 index, address airline, string flight, uint256 timestamp);
 
 
     // Register an oracle with the contract
-    function registerOracle
-                            (
-                            )
-                            external
-                            payable
+    function registerOracle() external
+                              payable
     {
         // Require registration fee
         require(msg.value >= REGISTRATION_FEE, "Registration fee is required");
 
         uint8[3] memory indexes = generateIndexes(msg.sender);
 
-        oracles[msg.sender] = Oracle({
-                                        isRegistered: true,
-                                        indexes: indexes
-                                    });
+        Oracle storage o = oracles[msg.sender];
+        o.indexes = indexes;
+        o.isRegistered = true;
     }
 
-    function getMyIndexes
-                            (
-                            )
-                            view
-                            external
-                            returns(uint8[3] memory)
+    function getMyIndexes () view
+                             external
+                             returns(uint8[3] memory)
     {
-        require(oracles[msg.sender].isRegistered, "Not registered as an oracle");
 
-        return oracles[msg.sender].indexes;
+        Oracle storage o = oracles[msg.sender];
+        require(o.isRegistered, "Not registered as an oracle");
+
+        return o.indexes;
     }
 
 
@@ -474,19 +469,15 @@ contract FlightSuretyApp {
     }
 
     // Returns array of three non-duplicating integers from 0-9
-    function generateIndexes
-                            (                       
-                                address account         
-                            )
-                            internal
-                            returns(uint8[3] memory)
+    function generateIndexes(address account) internal
+                                              returns(uint8[3] memory)
     {
         uint8[3] memory indexes;
-        indexes[0] = getRandomIndex(account);
+        unchecked {indexes[0] = getRandomIndex(account);}
         
         indexes[1] = indexes[0];
         while(indexes[1] == indexes[0]) {
-            indexes[1] = getRandomIndex(account);
+           indexes[1] = getRandomIndex(account);
         }
 
         indexes[2] = indexes[1];
@@ -498,23 +489,19 @@ contract FlightSuretyApp {
     }
 
     // Returns array of three non-duplicating integers from 0-9
-    function getRandomIndex
-                            (
-                                address account
-                            )
-                            internal
-                            returns (uint8)
+    function getRandomIndex(address account) internal
+                                             returns (uint8)
     {
         uint8 maxValue = 10;
 
         // Pseudo random number...the incrementing nonce adds variation
-        uint8 random = uint8(uint256(keccak256(abi.encodePacked(blockhash(block.number - nonce++), account))) % maxValue);
+        unchecked {uint8 random = uint8(uint256(keccak256(abi.encodePacked(blockhash(block.number - nonce++), account))) % maxValue);
 
         if (nonce > 250) {
             nonce = 0;  // Can only fetch blockhashes for last 256 blocks so we adapt
         }
 
-        return random;
+        return random; }
     }
 
 // endregion
