@@ -8,7 +8,7 @@ export default class Contract {
         let config = Config[network];
         this.web3 = new Web3(new Web3.providers.HttpProvider(config.url));
         this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
-        this.flightSuretyApp.options.gas = 200000;
+        this.flightSuretyApp.options.gas = 2000000;
         this.initialize(callback);
         this.owner = null;
         this.airlines = [];

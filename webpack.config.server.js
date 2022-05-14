@@ -19,11 +19,11 @@ module.exports = {
         allowlist: ['webpack/hot/poll?1000']
     })],
     module: {
-        rules: [{
-            test: /\.js?$/,
-            use: 'babel-loader',
-            exclude: /node_modules/
-        }]
+        // rules: [{
+        //     test: /\.js?$/,
+        //     use: 'babel-loader',
+        //     exclude: /node_modules/
+        // }]
     },
     plugins: [
         new StartServerPlugin('server.js'),
