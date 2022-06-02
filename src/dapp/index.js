@@ -41,11 +41,11 @@ import './flightsurety.css';
         DOM.elid('airline-info').addEventListener('click', () => {
             let infoAddress = DOM.elid('airlineInfoAddress').value;
             contract.airlineFunding(infoAddress, (error, result) => {
-                DOM.elid("airlineInfoFunding").innerHTML = contract.weiToEther(result);
+                DOM.elid("airlineInfoFunding").value = contract.weiToEther(result);
             });
             contract.airlineVotes(infoAddress, (error, result) => {
                 console.log("votes", result);
-                DOM.elid("airlineInfoVotes").innerHTML = result;
+                DOM.elid("airlineInfoVotes").value = result;
             });
         })
     
@@ -115,6 +115,30 @@ import './flightsurety.css';
                 contract.numRegisteredFlights((error, result) => {
                     DOM.elid("numFlights").innerText = result;
                 });
+            });
+        })
+
+        // User-submitted transaction
+        DOM.elid('flight-info').addEventListener('click', () => {
+            let flightInfoCode = DOM.elid('flightInfoCode').value;
+            console.log("getting flight status for ", flightInfoCode);
+          
+            contract.getFlightAirline(flightInfoCode, (error, result) => {
+                DOM.elid("flightInfoAirlineAddress").value  = result;
+            });
+
+            contract.getFlightStatus(flightInfoCode, (error, result) => {
+
+                let statuses = {
+                    0:  "Unknown",
+                    10: "On Time",
+                    20: "Late Airline",
+                    30: "Late Weather",
+                    40: "Late Technical",
+                    50: "Late Other"
+                }
+
+                DOM.elid("flightInfoStatus").value = statuses[result];
             });
         })
     });

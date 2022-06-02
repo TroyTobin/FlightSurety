@@ -118,6 +118,12 @@ contract FlightSuretyData {
         _;
     }
 
+
+    modifier requireFlightRegistered(bytes32 flightCode)
+    {
+        require(flights[flightCode].isRegistered == true, "Flight is not registered");
+        _;
+    }
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
@@ -322,7 +328,7 @@ contract FlightSuretyData {
     }
 
 
-       /**
+    /**
     * @dev Add an airline to the registration queue
     *      Can only be called from FlightSuretyApp contract
     *
@@ -348,6 +354,47 @@ contract FlightSuretyData {
 
         return true;
     }
+
+    /**
+    * @dev Update the flight status of the indicated flight
+    */
+    function updateFlightStatus(bytes32 flightCode, uint8 status, uint256 timestamp) external
+                                                                                     requireAuthorizedContract()
+                                                                                     requireFlightRegistered(flightCode)
+    {
+        Flight storage f = flights[flightCode];
+        f.statusCode = status;
+        f.updatedTimestamp = timestamp;
+    }
+
+    /**
+    * @dev Get the flight status of the indicated flight
+    */
+    function getFlightStatus(bytes32 flightCode) external
+                                                 view
+                                                 requireAuthorizedContract()
+                                                 requireFlightRegistered(flightCode)
+                                                 returns (uint8)
+    {
+        Flight storage f = flights[flightCode];
+        return f.statusCode;
+    }
+
+
+
+    /**
+    * @dev Get the airline that is running the indicated flight
+    */
+    function getFlightAirline(bytes32 flightCode) external
+                                                  view
+                                                  requireAuthorizedContract()
+                                                  requireFlightRegistered(flightCode)
+                                                  returns (address)
+    {
+        Flight storage f = flights[flightCode];
+        return f.airline;
+    }
+
 
    /**
     * @dev Return the number of registered airlines

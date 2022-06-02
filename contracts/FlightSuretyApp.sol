@@ -24,7 +24,7 @@ contract FlightSuretyApp {
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
 
-    // Flight status codees
+    // Flight status codes
     uint8 private constant STATUS_CODE_UNKNOWN = 0;
     uint8 private constant STATUS_CODE_ON_TIME = 10;
     uint8 private constant STATUS_CODE_LATE_AIRLINE = 20;
@@ -308,32 +308,47 @@ contract FlightSuretyApp {
 
         return success;
     }
+
+    
+
+    /**
+     * @dev Return the number of airlineflight status
+     *
+     */
+     function getFlightStatus(bytes32 flightCode) external
+                                                  view
+                                                  returns (uint8)
+    {
+        return dataContract.getFlightStatus(flightCode);                       
+    }
+
+    /**
+    * @dev Get the airline that is running the indicated flight
+    */
+    function getFlightAirline(bytes32 flightCode) external
+                                                  view
+                                                  returns (address)
+    {
+        return dataContract.getFlightAirline(flightCode);   
+    }
     
    /**
     * @dev Called after oracle has updated flight status
     *
     */  
-    function processFlightStatus
-                                (
-                                    address airline,
-                                    string memory flight,
-                                    uint256 timestamp,
-                                    uint8 statusCode
-                                )
-                                internal
-                                pure
+    function processFlightStatus(address airline,
+                                 bytes32 flight,
+                                 uint256 timestamp,
+                                 uint8 statusCode) internal
     {
+        dataContract.updateFlightStatus(flight, statusCode, timestamp);
     }
 
 
     // Generate a request for oracles to fetch flight information
-    function fetchFlightStatus
-                        (
-                            address airline,
-                            string memory flight,
-                            uint256 timestamp                            
-                        )
-                        external
+    function fetchFlightStatus(address airline,
+                               bytes32 flight,
+                               uint256 timestamp) external
     {
         uint8 index = getRandomIndex(msg.sender);
 
@@ -382,14 +397,14 @@ contract FlightSuretyApp {
     mapping(bytes32 => ResponseInfo) private oracleResponses;
 
     // Event fired each time an oracle submits a response
-    event FlightStatusInfo(address airline, string flight, uint256 timestamp, uint8 status);
+    event FlightStatusInfo(address airline, bytes32 flight, uint256 timestamp, uint8 status);
 
-    event OracleReport(address airline, string flight, uint256 timestamp, uint8 status);
+    event OracleReport(address airline, bytes32 flight, uint256 timestamp, uint8 status);
 
     // Event fired when flight status request is submitted
     // Oracles track this and if they have a matching index
     // they fetch data and submit a response
-    event OracleRequest(uint256 index, address airline, string flight, uint256 timestamp);
+    event OracleRequest(uint256 index, address airline, bytes32 flight, uint256 timestamp);
 
 
     // Register an oracle with the contract
@@ -418,23 +433,28 @@ contract FlightSuretyApp {
     }
 
 
+    function oracleIndexMatches(address oracleAddress, uint8 index) view
+                                                                    public
+                                                                    returns (bool ret)
+    {
+        ret = ((oracles[oracleAddress].indexes[0] == index) || 
+               (oracles[oracleAddress].indexes[1] == index) || 
+               (oracles[oracleAddress].indexes[2] == index));
 
+        return ret;
+    }
 
     // Called by oracle when a response is available to an outstanding request
     // For the response to be accepted, there must be a pending request that is open
     // and matches one of the three Indexes randomly assigned to the oracle at the
     // time of registration (i.e. uninvited oracles are not welcome)
-    function submitOracleResponse
-                        (
-                            uint8 index,
-                            address airline,
-                            string memory flight,
-                            uint256 timestamp,
-                            uint8 statusCode
-                        )
-                        external
+    function submitOracleResponse(uint8 index,
+                                  address airline,
+                                  bytes32 flight,
+                                  uint256 timestamp,
+                                  uint8 statusCode) external
     {
-        require((oracles[msg.sender].indexes[0] == index) || (oracles[msg.sender].indexes[1] == index) || (oracles[msg.sender].indexes[2] == index), "Index does not match oracle request");
+        require(oracleIndexMatches(msg.sender, index), "Index does not match oracle request");
 
 
         bytes32 key = keccak256(abi.encodePacked(index, airline, flight, timestamp)); 
@@ -455,15 +475,11 @@ contract FlightSuretyApp {
     }
 
 
-    function getFlightKey
-                        (
-                            address airline,
-                            string memory flight,
-                            uint256 timestamp
-                        )
-                        pure
-                        internal
-                        returns(bytes32) 
+    function getFlightKey(address airline,
+                          string memory flight,
+                          uint256 timestamp) pure
+                                             internal
+                                             returns(bytes32) 
     {
         return keccak256(abi.encodePacked(airline, flight, timestamp));
     }
@@ -553,6 +569,16 @@ interface FlightSuretyData {
     function numRegisteredFlights() external
                                     view
                                     returns(uint256);
+    function updateFlightStatus(bytes32 flightCode, uint8 status, uint256 timestamp) external;
+           
+    function getFlightStatus(bytes32 flightCode) external
+                                                 view
+                                                 returns (uint8);
+
+    function getFlightAirline(bytes32 flightCode) external
+                                                  view
+                                                  returns (address);
+
     function buy() external
                    payable;
 

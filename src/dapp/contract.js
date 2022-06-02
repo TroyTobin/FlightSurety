@@ -60,10 +60,11 @@ export default class Contract {
         let payload = {
             airline: self.airlines[0],
             flight: flight,
+            flightPadded: this.web3.utils.padLeft(this.web3.utils.asciiToHex(flight)),
             timestamp: Math.floor(Date.now() / 1000)
         } 
         self.flightSuretyApp.methods
-            .fetchFlightStatus(payload.airline, payload.flight, payload.timestamp)
+            .fetchFlightStatus(payload.airline, payload.flightPadded, payload.timestamp)
             .send({ from: self.owner}, (error, result) => {
                 callback(error, payload);
             });
@@ -162,5 +163,23 @@ export default class Contract {
         self.flightSuretyApp.methods
              .numRegisteredFlights()
              .call({ from: self.owner}, callback);
+    }
+
+    getFlightStatus(flightCode, callback) {
+        let self = this;
+        flightCode = this.web3.utils.padLeft(this.web3.utils.asciiToHex(flightCode))
+        console.log("Contract get flight info ", flightCode);
+        console.log("owner", self.owner);
+        self.flightSuretyApp.methods
+             .getFlightStatus(flightCode)
+             .call({from: self.owner}, callback);
+    }
+
+    getFlightAirline(flightCode, callback) {
+        let self = this;
+        flightCode = this.web3.utils.padLeft(this.web3.utils.asciiToHex(flightCode))
+        self.flightSuretyApp.methods
+             .getFlightAirline(flightCode)
+             .call({from: self.owner}, callback);
     }
 }

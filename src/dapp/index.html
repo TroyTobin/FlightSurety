@@ -47,6 +47,26 @@
                 </div>
                 <div class="top-20">
                     <form>
+                        <label class="form">Flight Information</label>
+                        <div class="form-group row">
+                            <label for="flightInfoCode" class="col-sm-4 col-form-label">Flight Code</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="flightInfoCode" placeholder="">
+                            </div>
+                            <label for="flightInfoAirlineAddress" class="col-sm-4 col-form-label">Airline</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="flightInfoAirlineAddress" readonly>
+                            </div>
+                            <label for="flightInfoStatus" class="col-sm-4 col-form-label">Flight Status</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="flightInfoStatus" readonly>
+                            </div>
+                        </div>
+                        <btn class="btn btn-primary" id="flight-info">Get Info</btn>
+                    </form>
+                </div>
+                <div class="top-20">
+                    <form>
                         <label class="form">Register Flight</label>
                         <div class="form-group row">
                             <label for="flightAirlineAddress" class="col-sm-4 col-form-label">Airline Address</label>
@@ -97,11 +117,11 @@
                             </div>
                             <label for="airlineInfoVotes" class="col-sm-4 col-form-label">Airline Votes</label>
                             <div class="col-sm-6">
-                                <label type="text" class="form-control" id="airlineInfoVotes">0</label>
+                                <input type="text" class="form-control" id="airlineInfoVotes" readonly>
                             </div>
                             <label for="airlineInfoFunding" class="col-sm-4 col-form-label">Airline Funding (ether)</label>
                             <div class="col-sm-6">
-                                <label type="text" class="form-control" id="airlineInfoFunding">0</label>
+                                <input type="text" class="form-control" id="airlineInfoFunding" readonly>
                             </div>
                         </div>
                         <btn class="btn btn-primary" id="airline-info">Get Info</btn>
