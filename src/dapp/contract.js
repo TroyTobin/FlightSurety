@@ -134,7 +134,6 @@ export default class Contract {
         self.flightSuretyApp.methods
             .registerAirline(payload.airline, payload.name)
             .send({from: registrarAirlineAddress}, (error, result) => {
-                callback(error, result);
             })
             .then(function(events){
                 callback(events.events["RegisterAirlineFailure"], events.events["RegisterAirlineSuccess"]);

@@ -24,8 +24,8 @@ module.exports = function(deployer) {
                     await appInstance.registerFirstAirline(firstAirline, firstAirlineName);
 
                     // Force the airline to provide funding
-                    //let funding = web3.utils.toWei(web3.utils.toBN(10), "ether")
-                    //await appInstance.fundAirline(firstAirline, {from:firstAirline, value:funding});
+                    let funding = web3.utils.toWei(web3.utils.toBN(10), "ether")
+                    await appInstance.fundAirline({from:firstAirline, value:funding});
                 });
     });
 }

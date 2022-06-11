@@ -2,6 +2,7 @@ body {
     background-image: url('flight.jpg'); /* Source: iStockPhoto */
     background-repeat: no-repeat;
     background-size: cover;
+    background-color: #444;
 }
 
 .controls {
@@ -51,3 +52,36 @@ label.form {
 input {
     margin-right: 30px;
 }
+
+.tab {
+    overflow: hidden;
+    border: none;
+    background-color: rgb(223, 227, 243);
+}
+  
+.tab button {
+    background-color: rgb(187, 193, 218);
+    float: left;
+    border: none;
+    padding: 15px 20px;
+}
+  
+.tab button:hover {
+    background-color: rgb(164, 171, 199);
+}
+  
+.tab button.active {
+    background-color: rgb(118, 133, 165)
+}
+  
+.tabcontent {
+    display: none;
+    padding: 15px 20px;
+    border: none;
+    animation: fade 0.5s;
+  }
+  
+  @keyframes fade {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }

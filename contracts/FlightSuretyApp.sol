@@ -91,9 +91,9 @@ contract FlightSuretyApp {
     * @dev Modifier that requires an airline be registered
     *
     */
-    modifier requireAirlineIsRegistered()
+    modifier requireAirlineIsRegistered(address airline)
     {
-        require(dataContract.isAirline(msg.sender), "Airline is not registered");
+        require(dataContract.isAirline(airline), "Airline is not registered");
         _;
     }
 
@@ -101,9 +101,9 @@ contract FlightSuretyApp {
     * @dev Modifier that requires an airline is funded
     *
     */
-    modifier requireAirlineIsFunded()
+    modifier requireAirlineIsFunded(address airline)
     {
-        require(dataContract.isAirlineFunded(msg.sender), "Airline is not funded");
+        require(dataContract.isAirlineFunded(airline), "Airline is not funded");
         _;
     }
 
@@ -118,6 +118,26 @@ contract FlightSuretyApp {
         _;
     }
 
+
+    /**
+    * @dev Modifier that requires the flight to be registered against the airline
+    *
+    */
+    modifier requireFlightIsRegistered(address airline, bytes32 flight)
+    {
+        require(dataContract.isFlightRegistered(airline, flight), "Flight is not registered");
+        _;
+    }
+
+    /**
+    * @dev Modifier that ensure there is a cap on insurance purchases
+    *
+    */
+    modifier requireWithinInsuranceLimit(uint256 value)
+    {
+        require(value < 1 ether, "Insurance value exceeds limit of 1 ether");
+        _;
+    }
 
     /********************************************************************************************/
     /*                                       CONSTRUCTOR                                        */
@@ -176,8 +196,8 @@ contract FlightSuretyApp {
     */   
     function registerAirline(address newAirline, string memory name) external
                                                                      requireAirlineNotRegistered(newAirline)
-                                                                     requireAirlineIsRegistered()
-                                                                     requireAirlineIsFunded()
+                                                                     requireAirlineIsRegistered(msg.sender)
+                                                                     requireAirlineIsFunded(msg.sender)
                                                                      returns(bool success)
     {
         success = false;
@@ -242,8 +262,8 @@ contract FlightSuretyApp {
      * Only registered and funded airlines can vote in support of registering another airline
      */
      function voteToRegisterAirline(address newAirline) external
-                                                        requireAirlineIsRegistered()
-                                                        requireAirlineIsFunded()
+                                                        requireAirlineIsRegistered(msg.sender)
+                                                        requireAirlineIsFunded(msg.sender)
                                                      
      {
          dataContract.voteToRegisterAirline(newAirline, msg.sender);
@@ -269,7 +289,7 @@ contract FlightSuretyApp {
     */
     function fundAirline() external
                            payable
-                           requireAirlineIsRegistered()
+                           requireAirlineIsRegistered(msg.sender)
     {
         dataContract.fundAirline(payable(msg.sender), msg.value);
     }
@@ -291,8 +311,8 @@ contract FlightSuretyApp {
     *
     */  
     function registerFlight(bytes32 flightCode, uint8 status) external
-                                                              requireAirlineIsRegistered()
-                                                              requireAirlineIsFunded()
+                                                              requireAirlineIsRegistered(msg.sender)
+                                                              requireAirlineIsFunded(msg.sender)
                                                               returns (bool success)
     {
         success = dataContract.registerFlight(flightCode, status, msg.sender);
@@ -360,6 +380,30 @@ contract FlightSuretyApp {
 
         emit OracleRequest(index, airline, flight, timestamp);
     } 
+
+
+    // region PASSENGER TRANSACTIONS
+    // Purchase flight insurance
+    function purchaseFlightInsurance(address airline,
+                                     bytes32 flight) external
+                                                     payable
+                                                     requireAirlineIsRegistered(airline)
+                                                     requireFlightIsRegistered(airline, flight)
+                                                     requireWithinInsuranceLimit(msg.value)
+    {
+        dataContract.buy(airline, flight, msg.sender, msg.value);
+    }
+
+
+    // withdraw flight insurance
+    function withdrawFlightInsurance(address airline,
+                                     bytes32 flight) external
+                                                     payable
+                                                     requireAirlineIsRegistered(airline)
+                                                     requireFlightIsRegistered(airline, flight)
+    {
+        dataContract.buy(airline, flight, msg.sender, msg.value);
+    }
 
 
     // region ORACLE MANAGEMENT
@@ -565,7 +609,10 @@ interface FlightSuretyData {
     
     function registerFlight(bytes32 flightCode, uint8 status, address airline) external
                                                                                returns (bool success);
-
+    
+    function isFlightRegistered(address airline, bytes32 flightCode) external
+                                                                     view
+                                                                     returns(bool);
     function numRegisteredFlights() external
                                     view
                                     returns(uint256);
@@ -579,8 +626,9 @@ interface FlightSuretyData {
                                                   view
                                                   returns (address);
 
-    function buy() external
-                   payable;
+    function buy(address airline, bytes32 flightCode, 
+                 address passenger, uint256 value) external
+                                                   payable;
 
     function creditInsurees() external
                               pure;

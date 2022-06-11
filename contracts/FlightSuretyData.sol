@@ -355,6 +355,21 @@ contract FlightSuretyData {
         return true;
     }
 
+
+    /**
+    * @dev Function to determine if the specified flight is
+    *      registered agains the airline
+    *
+    */
+    function isFlightRegistered(address airline, bytes32 flightCode) external
+                                                                     view
+                                                                     returns(bool)
+    {
+        Flight storage f = flights[flightCode];
+        return (f.airline == airline);
+    }
+
+
     /**
     * @dev Update the flight status of the indicated flight
     */
@@ -411,13 +426,13 @@ contract FlightSuretyData {
     * @dev Buy insurance for a flight
     *
     */   
-    function buy
-                            (                             
-                            )
-                            external
-                            payable
+    function buy(address airline, bytes32 flightCode, 
+                 address passenger, uint256 value) external
+                                                   payable
+                                                   requireAuthorizedContract()
+                                                   requireFlightRegistered(flightCode)
     {
-
+        
     }
 
     /**

@@ -1,13 +1,130 @@
 
 import DOM from './dom';
+import Config from './config.json';
 import Contract from './contract';
 import './flightsurety.css';
+import Web3 from 'web3';
+console.log("yo");
+let config = Config['localhost'];
+
+let web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws')));
+
+// Status codes for flights
+const STATUS_CODE_UNKNOWN = 0;
+const STATUS_CODE_ON_TIME = 10;
+const STATUS_CODE_LATE_AIRLINE = 20;
+const STATUS_CODE_LATE_WEATHER = 30;
+const STATUS_CODE_LATE_TECHNICAL = 40;
+const STATUS_CODE_LATE_OTHER = 50;
+
+const STATUS_OPTIONS = [
+  STATUS_CODE_UNKNOWN,
+  STATUS_CODE_ON_TIME,
+  STATUS_CODE_LATE_AIRLINE,
+  STATUS_CODE_LATE_WEATHER,
+  STATUS_CODE_LATE_TECHNICAL,
+  STATUS_CODE_LATE_OTHER
+];
+
+const STATUS_MAP = {
+    0:  "Unknown",
+    10: "On Time",
+    20: "Late Airline",
+    30: "Late Weather",
+    40: "Late Technical",
+    50: "Late Other"
+};
+
 
 (async() => {
 
     let result = null;
 
     let contract = new Contract('localhost', () => {
+
+        // User-submitted transaction
+        DOM.elid('bootstrap-airlines').addEventListener('click', () => {
+            console.log("bootstrap airlines");
+            let numAirlines = parseInt(DOM.elid('numAirlinesToRegister').value);
+            web3.eth.getAccounts()
+            .then(async (accounts) => {
+                console.log(accounts);
+                console.log("accounts length", accounts.length);
+                console.log("numAirlines", numAirlines);
+
+                // Offset of 2 accounts for the contract address and the "first" 
+                // airline that is registered on contract deploy
+                if (accounts.length >= (numAirlines + 2))
+                {
+                    // Units of Ether
+                    let FUND_AMOUNT = 10;
+
+                    for(let a=0; a<numAirlines; a++) {      
+                        let newAirlineName = "Airline_" + a;
+                        let newAirlineAddress = accounts[a + 2];
+
+                        // get all previously registered airlines to vote for the new airline
+                        for (let b=(a - 1); b>=1; b--) {
+                            let votingAirlineAddress = accounts[b];
+                            contract.voteAirline(votingAirlineAddress, newAirlineAddress, (error, result) => {});
+                        }
+
+                        console.log("registering", newAirlineAddress, newAirlineName);
+                        await contract.registerAirline(accounts[1], newAirlineAddress, newAirlineName, async (error, result) => {
+                            contract.numRegisteredAirlines((error, result) => {
+                                DOM.elid("numAirlines").innerText = result;
+                            });
+
+                            if (result)
+                            {
+                                console.log("ADD", typeof(result), newAirlineAddress, newAirlineName);
+                                addAirline(newAirlineAddress, newAirlineName);
+                            }
+                        })
+                        
+                        // Lets fund the airline too
+                        await contract.fundAirline(newAirlineAddress, FUND_AMOUNT, (error, result) => {});
+                    }
+                }
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        })
+
+        // User-submitted transaction
+        DOM.elid('bootstrap-flights').addEventListener('click', () => {
+            console.log("bootstrap airlines");
+            let numFlights = parseInt(DOM.elid('numFlightsToRegister').value);
+            web3.eth.getAccounts()
+            .then(async (accounts) => {
+
+                let numRegisteredFlights = 0;
+
+                // Offset of 1 accounts for the contract address
+                // Round-robin the airlines for creating new flights
+                for(let a=0; a<numFlights; a++) {      
+                    let flightCode = "Flight_" + a;
+                    let registrarAirlineAddress = accounts[a%(accounts.length - 1) + 1];
+                    let flightStatus = STATUS_OPTIONS[Math.floor(Math.random()*STATUS_OPTIONS.length)];
+
+                    console.log("registering flight", registrarAirlineAddress, flightCode, flightStatus);
+                    await contract.registerFlight(registrarAirlineAddress, flightCode, flightStatus, (failure, success) => {
+                        contract.numRegisteredFlights((error, result) => {
+                            DOM.elid("numFlights").innerText = result;
+                        });
+
+                        if (success)
+                        {
+                            addFlight(registrarAirlineAddress, flightCode, STATUS_MAP[flightStatus]);
+                        }
+                    })
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        })
 
         // Read transaction
         contract.isOperational((error, result) => {
@@ -129,16 +246,9 @@ import './flightsurety.css';
 
             contract.getFlightStatus(flightInfoCode, (error, result) => {
 
-                let statuses = {
-                    0:  "Unknown",
-                    10: "On Time",
-                    20: "Late Airline",
-                    30: "Late Weather",
-                    40: "Late Technical",
-                    50: "Late Other"
-                }
+                
 
-                DOM.elid("flightInfoStatus").value = statuses[result];
+                DOM.elid("flightInfoStatus").value = STATUS_MAP[result];
             });
         })
     });
@@ -157,7 +267,27 @@ function display(title, description, results) {
         section.appendChild(row);
     })
     displayDiv.append(section);
+}
 
+function addAirline(airlineAddress, airlineName) {
+    let displayDiv = DOM.elid("registered-airlines");
+    let section = DOM.section();
+    let row = section.appendChild(DOM.div({className:'row'}));
+    row.appendChild(DOM.div({className: 'col-sm-4 field'}, airlineName));
+    row.appendChild(DOM.div({className: 'col-sm-8 field-value'}, airlineAddress));
+    section.appendChild(row);
+    displayDiv.append(section);
+}
+
+function addFlight(airlineAddress, flightCode, flightStatus) {
+    let displayDiv = DOM.elid("registered-flights");
+    let section = DOM.section();
+    let row = section.appendChild(DOM.div({className:'row'}));
+    row.appendChild(DOM.div({className: 'col-sm-4 field'}, airlineAddress));
+    row.appendChild(DOM.div({className: 'col-sm-4 field'}, flightCode));
+    row.appendChild(DOM.div({className: 'col-sm-4 field'}, flightStatus));
+    section.appendChild(row);
+    displayDiv.append(section);
 }
 
 

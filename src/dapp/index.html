@@ -12,17 +12,121 @@
 <body>
     <script src="./main.js"></script>
 
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <script>
+        function openTab(evt, tabName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+        
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+        
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+
+    <!-- <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <a class="navbar-brand" href="#">FlightSurety</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" 
                 data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
                 aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-    </nav>
+    </nav> -->
 
+
+
+ <!-- Tab links -->
+  <div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'Main')">Main</button>
+    <button class="tablinks" onclick="openTab(event, 'Debug')">Debug</button>
+  </div>
+
+  <div id="Main" class="tabcontent">
     <main class="container">
+        <div class="row">
+            <div class="mx-auto text-info font-weight-bold">
+                <h2>System Initialisation</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <form>
+                    <label class="form text-secondary">Bootstrap Airlines (Step 1)</label>
+                    <div class="form-group row">
+                        <label for="numAirlinesToRegister" class="col-sm-4 col-form-label">Number of Airlines</label>
+                        <div class="col-sm-6">
+                            <input type="number" class="form-control" id="numAirlinesToRegister">
+                        </div>
+                    </div>
+                    <btn class="btn btn-primary" id="bootstrap-airlines">Register Airlines</btn>
+                </form>
+            </div>
 
+            <div class="col-sm">
+                <form>
+                    <label class="form">Bootstrap Flights (Step 2)</label>
+                    <div class="form-group row">
+                        <label for="numFlightsToRegister" class="col-sm-4 col-form-label">Number of Airlines</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="numFlightsToRegister">
+                        </div>
+                    </div>
+                    <btn class="btn btn-primary" id="bootstrap-flights">Register Flights</btn>
+                </form>
+            </div>
+        </div>
+
+        <br>
+        <label class="form text-secondary">Registered Airlines</label>
+        <div id="registered-airlines">
+            <div class="row">
+                <div class="col-sm-4 field">
+                    Airline Name
+                </div>
+                <div class="col-sm-4 field">
+                    Airline Address
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <label class="form text-secondary">Registered Flights</label>
+        <div id="registered-flights">
+
+            <div class="row">
+                <div class="col-sm-4 field">
+                    Airline Address
+                </div>
+                <div class="col-sm-4 field">
+                    Flight Code
+                </div>
+                <div class="col-sm-4 field">
+                    Initial Flight Status
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<div id="Debug" class="tabcontent">
+    <main class="container">
+        <div class="row">
+            <div class="mx-auto text-info font-weight-bold">
+                <h2>Debug functions</h3>
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm top-20">
                 <div id="display-wrapper" class="top-20"></div>
@@ -190,6 +294,7 @@
             </div>
         </div>
     </main>
+</div>
 
 </body>
 
