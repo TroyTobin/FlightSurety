@@ -138,7 +138,7 @@ const STATUS_MAP = {
         contract.isOperational((error, result) => {
             console.log(error,result);
             display('Operational Status', 'Check if contract is operational', 
-                    [ { label: 'Operational Status', error: error, value: result} ]);
+                    [ { label: 'Operational', error: error, value: result} ]);
         });
     
         contract.numRegisteredAirlines((error, result) => {
@@ -266,12 +266,11 @@ const STATUS_MAP = {
 function display(title, description, results) {
     let displayDiv = DOM.elid("display-wrapper");
     let section = DOM.section();
-    section.appendChild(DOM.h2(title));
-    section.appendChild(DOM.h5(description));
+    section.appendChild(DOM.h3({className: 'text-secondary'}, title));
     results.map((result) => {
         let row = section.appendChild(DOM.div({className:'row'}));
-        row.appendChild(DOM.div({className: 'col-sm-4 field'}, result.label));
-        row.appendChild(DOM.div({className: 'col-sm-8 field-value'}, result.error ? String(result.error) : String(result.value)));
+        row.appendChild(DOM.h4({className: 'col-sm-2 field'}, result.label));
+        row.appendChild(DOM.h4({className: 'col-sm-4 field-value'}, result.error ? String(result.error) : String(result.value)));
         section.appendChild(row);
     })
     displayDiv.append(section);

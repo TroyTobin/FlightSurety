@@ -35,28 +35,19 @@
         }
     </script>
 
-    <!-- <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-        <a class="navbar-brand" href="#">FlightSurety</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" 
-                data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </nav> -->
-
-
 
  <!-- Tab links -->
   <div class="tab">
-    <button class="tablinks" onclick="openTab(event, 'Main')">Main</button>
+    <button class="tablinks" onclick="openTab(event, 'Bootstrap')">Bootstrap</button>
+    <button class="tablinks" onclick="openTab(event, 'Insurance')">Insurance</button>
     <button class="tablinks" onclick="openTab(event, 'Debug')">Debug</button>
   </div>
 
-  <div id="Main" class="tabcontent">
+  <div id="Bootstrap" class="tabcontent">
     <main class="container">
         <div class="row">
             <div class="mx-auto text-info font-weight-bold">
-                <h2>System Initialisation</h3>
+                <h2>System Initialisation</h2>
             </div>
         </div>
         <div class="row">
@@ -75,7 +66,7 @@
 
             <div class="col-sm">
                 <form>
-                    <label class="form">Bootstrap Flights (Step 2)</label>
+                    <label class="form text-secondary">Bootstrap Flights (Step 2)</label>
                     <div class="form-group row">
                         <label for="numFlightsToRegister" class="col-sm-4 col-form-label">Number of Airlines</label>
                         <div class="col-sm-6">
@@ -120,21 +111,57 @@
     </main>
 </div>
 
-<div id="Debug" class="tabcontent">
+<div id="Insurance" class="tabcontent">
+
     <main class="container">
         <div class="row">
             <div class="mx-auto text-info font-weight-bold">
-                <h2>Debug functions</h3>
+                <h2>Insurance</h3>
             </div>
         </div>
+        <div id="display-wrapper" class="top-20"></div>
+        <div class="row">
+            <div class="col-sm-6">
+                <form>
+                    <label class="form text-secondary">Buy Insurance</label>
+
+                    <div class="form-group row">
+                        <label for="airlineAddressInsurance" class="col-sm-4 col-form-label">Airline Address</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="airlineAddressInsurance" placeholder="address">
+                        </div>
+                        <label for="airlineNameInsurance" class="col-sm-4 col-form-label">Airline Name</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="airlineNameInsurance" placeholder="airline name">
+                        </div>
+                        <label for="amountInsurance" class="col-sm-4 col-form-label">Insurance Amount (Ether)</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="amountInsurance" placeholder="0.0">
+                        </div>
+                    </div>
+                    <btn class="btn btn-primary" id="buy-insurance">Buy</btn>
+                </form>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-sm top-20">
-                <div id="display-wrapper" class="top-20"></div>
                 <div class="top-20">
                     <label class="form">Flight</label>
                     <input type="text" id="flight-number"> 
                     <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
                 </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<div id="Debug" class="tabcontent">
+    <main class="container">
+        <div class="row">
+            <div class="mx-auto text-info font-weight-bold">
+                <h2>Debug functions</h3>
             </div>
         </div>
 
