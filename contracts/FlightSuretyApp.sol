@@ -294,6 +294,17 @@ contract FlightSuretyApp {
         dataContract.fundAirline(payable(msg.sender), msg.value);
     }
 
+
+    /**
+     * @dev Check if the airline is funded and rengistered
+     */
+    function isAirlineRegisteredAndFunded(address airlineAddress) external
+                                                                  view
+                                                                  returns (bool)
+    {
+        return (dataContract.isAirlineFunded(airlineAddress) && dataContract.isAirline(airlineAddress));
+    }
+
     /**
      * @dev Return the number of airlines registered
      *

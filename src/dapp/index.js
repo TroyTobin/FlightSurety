@@ -99,16 +99,24 @@ const STATUS_MAP = {
             web3.eth.getAccounts()
             .then(async (accounts) => {
 
-                let numRegisteredFlights = 0;
+                let airlineIndex = 0;
 
                 // Offset of 1 accounts for the contract address
                 // Round-robin the airlines for creating new flights
                 for(let a=0; a<numFlights; a++) {      
                     let flightCode = "Flight_" + a;
-                    let registrarAirlineAddress = accounts[a%(accounts.length - 1) + 1];
+
+                    airlineIndex = (airlineIndex + 1)%accounts.length;
+                    let airlineIsRegistered = await contract.isAirlineRegisteredAndFunded(accounts[airlineIndex]);
+                    while(!airlineIsRegistered)
+                    {
+                        airlineIndex = (airlineIndex + 1)%accounts.length;
+                        airlineIsRegistered = await contract.isAirlineRegisteredAndFunded(accounts[airlineIndex]);
+                    }
+
+                    let registrarAirlineAddress = accounts[airlineIndex];
                     let flightStatus = STATUS_OPTIONS[Math.floor(Math.random()*STATUS_OPTIONS.length)];
 
-                    console.log("registering flight", registrarAirlineAddress, flightCode, flightStatus);
                     await contract.registerFlight(registrarAirlineAddress, flightCode, flightStatus, (failure, success) => {
                         contract.numRegisteredFlights((error, result) => {
                             DOM.elid("numFlights").innerText = result;

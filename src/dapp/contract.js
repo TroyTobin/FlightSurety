@@ -52,7 +52,14 @@ export default class Contract {
         let self = this;
         self.flightSuretyApp.methods
              .numRegisteredAirlines()
-             .call({ from: self.owner}, callback);
+             .call({from: self.owner}, callback);
+    }
+
+    isAirlineRegisteredAndFunded(airline, callback) {
+        let self = this;
+        return self.flightSuretyApp.methods
+             .isAirlineRegisteredAndFunded(airline)
+             .call({from: self.owner}, callback);
     }
 
     fetchFlightStatus(flight, callback) {
