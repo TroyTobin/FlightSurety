@@ -428,7 +428,7 @@ contract FlightSuretyData {
     * @dev Return the number of registered airlines
     *
     */
-    function numRegisteredFlights() public
+    function numRegisteredFlights() external
                                     view
                                     returns(uint256)
     {
@@ -455,7 +455,7 @@ contract FlightSuretyData {
     * @dev Return the number of registered insurance policies on the contract
     *
     */
-    function numRegisteredInsurancePolicies() public
+    function numRegisteredInsurancePolicies() external
                                               view
                                               returns(uint256)
     {
@@ -467,7 +467,7 @@ contract FlightSuretyData {
     * @dev Return the number of registered insurance policies for a passenger
     *
     */
-    function numRegisteredInsurancePoliciesForPassenger(address passenger) public
+    function numRegisteredInsurancePoliciesForPassenger(address passenger) external
                                                                            view
                                                                            returns(uint256)
     {

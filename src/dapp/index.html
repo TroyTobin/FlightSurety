@@ -120,21 +120,38 @@
             </div>
         </div>
         <div id="display-wrapper" class="top-20"></div>
+
+        <div class="row">
+            <div class="col-sm-5 top-20">
+                <label class="form">Number Insurance Policies:</label>
+            </div>
+            <div class="col-sm top-20">
+                <label id="numInsurancePolicies">0</label>
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm-6">
                 <form>
                     <label class="form text-secondary">Buy Insurance</label>
 
                     <div class="form-group row">
-                        <label for="airlineAddressInsurance" class="col-sm-4 col-form-label">Airline Address</label>
+                        <label for="lairlineAddressInsurance" class="col-sm-4 col-form-label">Airline Address</label>
                         <div class="col-sm-6">
                             <input type="text" class="form-control" id="airlineAddressInsurance" placeholder="address">
                         </div>
                         <label for="airlineNameInsurance" class="col-sm-4 col-form-label">Airline Name</label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" id="airlineNameInsurance" placeholder="name">
+                            <input type="text" class="form-control" id="airlineNameInsurance" placeholder="airline name">
                         </div>
-                        <label for="amountInsurance" class="col-sm-4 col-form-label">Insurance Amount (Ether)</label>
+                        <label for="passengerAddressInsurance" class="col-sm-4 col-form-label">Passenger Address</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="passengerAddressInsurance" placeholder="address">
+                        </div>
+                        <label for="flightNameInsurance" class="col-sm-4 col-form-label">Flight Name</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="flightNameInsurance" placeholder="flight name">
+                        </div>
+                        <label for="amountInsurance" class="col-sm-4 col-form-label">Insurance Amount (Wei)</label>
                         <div class="col-sm-6">
                             <input type="text" class="form-control" id="amountInsurance" placeholder="0.0">
                         </div>
@@ -270,7 +287,7 @@
                         <div class="form-group row">
                             <label for="airlineFundAmount" class="col-sm-4 col-form-label">Amount (Ether)</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="airlineFundAmount" placeholder="address">
+                                <input type="text" class="form-control" id="airlineFundAmount" placeholder="0">
                             </div>
                         </div>
                         <btn class="btn btn-primary" id="fund-airline">Fund</btn>

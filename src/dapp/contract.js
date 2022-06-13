@@ -190,19 +190,31 @@ export default class Contract {
     }
 
 
-    purchaseFlightInsurance(airlineAddress, airlineName, amount, callback) {
+    purchaseFlightInsurance(airlineAddress, airlineName, flightName, passengerAddress, amount, callback) {
         let self = this;
+        console.log("Contract purchaseFlightInsurance", airlineAddress, airlineName, flightName, passengerAddress, amount, callback);
+
         let payload = {
             airline: airlineAddress,
             airlineName: airlineName,
-            insuraceAmount: this.web3.utils.toWei(this.web3.utils.toBN(amount), "ether")
+            flightName: this.web3.utils.padLeft(this.web3.utils.asciiToHex(flightName)),
+            passenger: passengerAddress,
+            insuranceAmount: this.web3.utils.toWei(this.web3.utils.toBN(amount), "wei")
         }
+        console.log("Contract purchaseFlightInsurance", payload.airline, payload.airlineName, payload.flightName, payload.insuranceAmount)
         self.flightSuretyApp.methods
-            .purchaseFlightInsurance(payload.airline, payload.airlineName, payload.insuraceAmount)
-            .send({from: registrarAirlineAddress}, (error, result) => {
+            .purchaseFlightInsurance(payload.airline, payload.airlineName, payload.flightName)
+            .send({from: payload.passenger, value:payload.insuranceAmount}, (error, result) => {
             })
             .then(function(events){
                 callback(events.events["RegisterFlightFailure"], events.events["RegisterFlightSuccess"]);
             });
+    }
+
+    numRegisteredInsurancePolicies(callback) {
+        let self = this;
+        self.flightSuretyApp.methods
+             .numRegisteredInsurancePolicies()
+             .call({ from: self.owner}, callback);
     }
 }

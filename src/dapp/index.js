@@ -163,15 +163,16 @@ const STATUS_MAP = {
     
         // User-submitted transaction
         DOM.elid('buy-insurance').addEventListener('click', () => {
-            let airlineAddress = DOM.elid('airlineAddressInsurance').value;
-            let airlineName    = DOM.elid('airlineNameInsurance').value;
-            let amount         = DOM.elid('amountInsurance').value;
-            contract.purchaseFlightInsurance(airlineAddress, airlineName, amount, (error, result) => {
-                DOM.elid("airlineInfoFunding").value = contract.weiToEther(result);
-            });
-            contract.airlineVotes(infoAddress, (error, result) => {
-                console.log("votes", result);
-                DOM.elid("airlineInfoVotes").value = result;
+            let airlineAddress   = DOM.elid('airlineAddressInsurance').value;
+            let airlineName      = DOM.elid('airlineNameInsurance').value;
+            let passengerAddress = DOM.elid('passengerAddressInsurance').value;
+            let flightName       = DOM.elid('flightNameInsurance').value;
+            let amount           = DOM.elid('amountInsurance').value;
+            console.log("Buy insurance", airlineAddress, airlineName, flightName, passengerAddress, amount);
+            contract.purchaseFlightInsurance(airlineAddress, airlineName, flightName, passengerAddress, amount, (error, result) => {
+                contract.numRegisteredInsurancePolicies((error, result) => {
+                    DOM.elid("numInsurancePolicies").innerText = result;
+                });
             });
         })
 

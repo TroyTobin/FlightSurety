@@ -406,6 +406,19 @@ contract FlightSuretyApp {
         dataContract.buy(airline, airlineName, flight, msg.sender, msg.value);
     }
 
+    function numRegisteredInsurancePolicies() external
+                                              view
+                                              returns(uint256)
+    {
+        return dataContract.numRegisteredInsurancePolicies();
+    }
+
+    function numRegisteredInsurancePoliciesForPassenger(address passenger) external
+                                                                           view
+                                                                           returns(uint256)
+    {
+        return dataContract.numRegisteredInsurancePoliciesForPassenger(passenger);
+    }
 
     // withdraw flight insurance
     function withdrawFlightInsurance(address airline,
@@ -637,9 +650,17 @@ interface FlightSuretyData {
                                                   view
                                                   returns (address);
 
-    function buy(address airline, string memory airlineName, bytes32 flightCode, 
+    function buy(address airline, string memory airlineName, bytes32 flightCode,
                  address passenger, uint256 value) external
                                                    payable;
+
+    function numRegisteredInsurancePolicies() external
+                                              view
+                                              returns(uint256);
+
+    function numRegisteredInsurancePoliciesForPassenger(address passenger) external
+                                                                           view
+                                                                           returns(uint256);
 
     function creditInsurees() external
                               pure;
