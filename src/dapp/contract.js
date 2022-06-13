@@ -188,4 +188,21 @@ export default class Contract {
              .getFlightAirline(flightCode)
              .call({from: self.owner}, callback);
     }
+
+
+    purchaseFlightInsurance(airlineAddress, airlineName, amount, callback) {
+        let self = this;
+        let payload = {
+            airline: airlineAddress,
+            airlineName: airlineName,
+            insuraceAmount: this.web3.utils.toWei(this.web3.utils.toBN(amount), "ether")
+        }
+        self.flightSuretyApp.methods
+            .purchaseFlightInsurance(payload.airline, payload.airlineName, payload.insuraceAmount)
+            .send({from: registrarAirlineAddress}, (error, result) => {
+            })
+            .then(function(events){
+                callback(events.events["RegisterFlightFailure"], events.events["RegisterFlightSuccess"]);
+            });
+    }
 }

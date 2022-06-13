@@ -276,9 +276,9 @@ contract FlightSuretyApp {
     *
     */
     function airlineFunding(address payable airline) external
-                                             view
-                                             requireAirlineIsCaller(airline)
-                                             returns (uint256)
+                                                     view
+                                                     requireAirlineIsCaller(airline)
+                                                     returns (uint256)
     {
         return dataContract.airlineFunding(airline);
     }
@@ -396,13 +396,14 @@ contract FlightSuretyApp {
     // region PASSENGER TRANSACTIONS
     // Purchase flight insurance
     function purchaseFlightInsurance(address airline,
+                                     string memory airlineName,
                                      bytes32 flight) external
                                                      payable
                                                      requireAirlineIsRegistered(airline)
                                                      requireFlightIsRegistered(airline, flight)
                                                      requireWithinInsuranceLimit(msg.value)
     {
-        dataContract.buy(airline, flight, msg.sender, msg.value);
+        dataContract.buy(airline, airlineName, flight, msg.sender, msg.value);
     }
 
 
@@ -413,7 +414,6 @@ contract FlightSuretyApp {
                                                      requireAirlineIsRegistered(airline)
                                                      requireFlightIsRegistered(airline, flight)
     {
-        dataContract.buy(airline, flight, msg.sender, msg.value);
     }
 
 
@@ -637,7 +637,7 @@ interface FlightSuretyData {
                                                   view
                                                   returns (address);
 
-    function buy(address airline, bytes32 flightCode, 
+    function buy(address airline, string memory airlineName, bytes32 flightCode, 
                  address passenger, uint256 value) external
                                                    payable;
 

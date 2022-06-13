@@ -161,6 +161,26 @@ const STATUS_MAP = {
             });
         })
     
+        // User-submitted transaction
+        DOM.elid('buy-insurance').addEventListener('click', () => {
+            let airlineAddress = DOM.elid('airlineAddressInsurance').value;
+            let airlineName    = DOM.elid('airlineNameInsurance').value;
+            let amount         = DOM.elid('amountInsurance').value;
+            contract.purchaseFlightInsurance(airlineAddress, airlineName, amount, (error, result) => {
+                DOM.elid("airlineInfoFunding").value = contract.weiToEther(result);
+            });
+            contract.airlineVotes(infoAddress, (error, result) => {
+                console.log("votes", result);
+                DOM.elid("airlineInfoVotes").value = result;
+            });
+        })
+
+
+        //***********************************************************//
+        //                                                           //
+        //                   DEBUG FUNCTIONALITY                     //
+        //                                                           //
+        //***********************************************************//
 
         // User-submitted transaction
         DOM.elid('airline-info').addEventListener('click', () => {

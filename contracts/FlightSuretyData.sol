@@ -49,6 +49,19 @@ contract FlightSuretyData {
 
     uint256 private registeredFlights = 0;
 
+    // Insurance
+    struct Insurance {
+        address airline;
+        bytes32 flightCode;
+        uint256 insurance;
+
+    }
+
+    // Tracks a passengers set of insurances
+    mapping(address => Insurance[]) private insurancePolicies;
+
+    uint256 private registeredInsurance = 0;
+
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/
@@ -426,13 +439,40 @@ contract FlightSuretyData {
     * @dev Buy insurance for a flight
     *
     */   
-    function buy(address airline, bytes32 flightCode, 
+    function buy(address airline, string memory airlineName, bytes32 flightCode, 
                  address passenger, uint256 value) external
                                                    payable
                                                    requireAuthorizedContract()
                                                    requireFlightRegistered(flightCode)
     {
-        
+        Insurance[] storage i = insurancePolicies[passenger];
+        i.push(Insurance(airline, flightCode, value));
+
+        registeredInsurance += 1;
+    }
+
+    /**
+    * @dev Return the number of registered insurance policies on the contract
+    *
+    */
+    function numRegisteredInsurancePolicies() public
+                                              view
+                                              returns(uint256)
+    {
+        return registeredInsurance;
+    }
+
+
+    /**
+    * @dev Return the number of registered insurance policies for a passenger
+    *
+    */
+    function numRegisteredInsurancePoliciesForPassenger(address passenger) public
+                                                                           view
+                                                                           returns(uint256)
+    {
+        Insurance[] storage i = insurancePolicies[passenger];
+        return i.length;
     }
 
     /**
