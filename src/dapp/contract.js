@@ -217,4 +217,12 @@ export default class Contract {
              .numRegisteredInsurancePolicies()
              .call({ from: self.owner}, callback);
     }
+
+
+    numRegisteredInsurancePoliciesForPassenger(passengerAdddress, callback) {
+        let self = this;
+        self.flightSuretyApp.methods
+             .numRegisteredInsurancePoliciesForPassenger(passengerAdddress)
+             .call({from: self.owner}, callback);
+    }
 }

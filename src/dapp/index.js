@@ -153,6 +153,11 @@ const STATUS_MAP = {
             DOM.elid("numFlights").innerText = result;
         });
 
+        contract.numRegisteredInsurancePolicies((error, result) => {
+            console.log("Num registered insurance policies", error, result);
+            DOM.elid("numInsurancePolicies").innerText = result;
+        });
+
         // User-submitted transaction
         DOM.elid('submit-oracle').addEventListener('click', () => {
             let flight = DOM.elid('flight-number').value;
@@ -174,6 +179,17 @@ const STATUS_MAP = {
                 contract.numRegisteredInsurancePolicies((error, result) => {
                     DOM.elid("numInsurancePolicies").innerText = result;
                 });
+            });
+        })
+
+    
+        // User-submitted transaction
+        DOM.elid('check-num-policies').addEventListener('click', () => {
+            let passengerAddress = DOM.elid('passengerAddressInsuranceStatus').value;
+            console.log("Num Policy Count", passengerAddress);
+            contract.numRegisteredInsurancePoliciesForPassenger(passengerAddress, (error, result) => {
+                console.log("num policies for passenger returned", error, result);
+                DOM.elid("numPoliciesPassenger").value = result;
             });
         })
 
