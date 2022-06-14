@@ -115,7 +115,8 @@ const STATUS_MAP = {
                     }
 
                     let registrarAirlineAddress = accounts[airlineIndex];
-                    let flightStatus = STATUS_OPTIONS[Math.floor(Math.random()*STATUS_OPTIONS.length)];
+                    // Make all flights online initially - the oracles will adjust this randomly
+                    let flightStatus = STATUS_CODE_ON_TIME;
 
                     await contract.registerFlight(registrarAirlineAddress, flightCode, flightStatus, (failure, success) => {
                         contract.numRegisteredFlights((error, result) => {
