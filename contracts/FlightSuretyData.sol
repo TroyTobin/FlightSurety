@@ -54,17 +54,21 @@ contract FlightSuretyData {
         address airline;
         bytes32 flightCode;
         uint256 insurance;
-
+        address passenger;
+        uint256 credit;
     }
 
     // Tracks a passengers set of insurances
-    mapping(address => Insurance[]) private insurancePolicies;
+    mapping(address => Insurance[]) private insurancePoliciesPassenger;
+    // Tracks a airline set of insurances
+    mapping(address => Insurance[]) private insurancePoliciesAirlines;
 
     uint256 private registeredInsurance = 0;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/
+    event InsuranceCredited(address passenger, uint256 credit);
 
     /**
     * @dev Constructor
@@ -445,8 +449,10 @@ contract FlightSuretyData {
                                                    requireAuthorizedContract()
                                                    requireFlightRegistered(flightCode)
     {
-        Insurance[] storage i = insurancePolicies[passenger];
-        i.push(Insurance(airline, flightCode, value));
+        Insurance[] storage ip = insurancePoliciesPassenger[passenger];
+        Insurance[] storage ia = insurancePoliciesAirlines[airline];
+        ip.push(Insurance(airline, flightCode, value, passenger, 0));
+        ia.push(Insurance(airline, flightCode, value, passenger, 0));
 
         registeredInsurance += 1;
     }
@@ -462,7 +468,6 @@ contract FlightSuretyData {
         return registeredInsurance;
     }
 
-
     /**
     * @dev Return the number of registered insurance policies for a passenger
     *
@@ -471,19 +476,76 @@ contract FlightSuretyData {
                                                                            view
                                                                            returns(uint256)
     {
-        Insurance[] storage i = insurancePolicies[passenger];
+        Insurance[] storage i = insurancePoliciesPassenger[passenger];
         return i.length;
     }
 
     /**
+    * @dev Return the airline address of registered insurance policy for the indicated passenger
+    *
+    */
+    function insurancePoliciesForPassengerAirline(address passenger, uint256 policyNumber) external
+                                                                                           view
+                                                                                           returns(address)
+    {
+        Insurance[] storage i = insurancePoliciesPassenger[passenger];
+        return i[policyNumber].airline;
+    }
+
+    /**
+    * @dev Return the flight name of registered insurance policy for the indicated passenger
+    *
+    */
+    function insurancePoliciesForPassengerFlightName(address passenger, uint256 policyNumber) external
+                                                                                              view
+                                                                                              returns(bytes32)
+    {
+        Insurance[] storage i = insurancePoliciesPassenger[passenger];
+        return i[policyNumber].flightCode;
+    }
+
+    /**
+    * @dev Return the insured amount of registered insurance policy for the indicated passenger
+    *
+    */
+    function insurancePoliciesForPassengerInsuranceAmount(address passenger, uint256 policyNumber) external
+                                                                                                   view
+                                                                                                   returns(uint256)
+    {
+        Insurance[] storage i = insurancePoliciesPassenger[passenger];
+        return i[policyNumber].insurance;
+    }
+
+    /**
+    * @dev Return the insured amount of registered insurance policy for the indicated passenger
+    *
+    */
+    function insurancePoliciesForPassengerCreditAmount(address passenger, uint256 policyNumber) external
+                                                                                                view
+                                                                                                returns(uint256)
+    {
+        Insurance[] storage i = insurancePoliciesPassenger[passenger];
+        return i[policyNumber].credit;
+    }
+
+
+    /**
      *  @dev Credits payouts to insurees
     */
-    function creditInsurees
-                                (
-                                )
-                                external
-                                pure
+    function creditInsurees(address airline, bytes32 flightCode) external
     {
+        Insurance[] storage ia = insurancePoliciesAirlines[airline];
+
+        for (uint i = 0; i < ia.length; i++) {
+            Insurance storage ins = ia[i];
+            if (ins.flightCode == flightCode){
+                address passenger = ins.passenger;
+                uint256 insuredAmount = ins.insurance;
+                uint256 credit = insuredAmount.mul(15).div(10);
+                ins.credit += credit;
+                emit InsuranceCredited(passenger, credit);
+            }
+        }
     }
     
 

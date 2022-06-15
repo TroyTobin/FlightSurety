@@ -182,7 +182,6 @@ const STATUS_MAP = {
             });
         })
 
-    
         // User-submitted transaction
         DOM.elid('check-num-policies').addEventListener('click', () => {
             let passengerAddress = DOM.elid('passengerAddressInsuranceStatus').value;
@@ -190,6 +189,29 @@ const STATUS_MAP = {
             contract.numRegisteredInsurancePoliciesForPassenger(passengerAddress, (error, result) => {
                 console.log("num policies for passenger returned", error, result);
                 DOM.elid("numPoliciesPassenger").value = result;
+            });
+        })
+
+        // User-submitted transaction
+        DOM.elid('policy-details').addEventListener('click', () => {
+            let passengerAddress = DOM.elid('passengerAddressInsuranceDetails').value;
+            let policyNumber = DOM.elid('policyNumber').value;
+            console.log("Policy Details", passengerAddress, policyNumber);
+            contract.insurancePoliciesForPassengerAirline(passengerAddress, policyNumber - 1, (error, result) => {
+                console.log("insurancePoliciesForPassengerAirline", error, result);
+                DOM.elid("policyAirline").value = result;
+            });
+            contract.insurancePoliciesForPassengerFlightName(passengerAddress, policyNumber - 1, (error, result) => {
+                console.log("insurancePoliciesForPassengerFlightName", error, web3.utils.hexToString(result));
+                DOM.elid("policyFlightName").value = web3.utils.hexToString(result);
+            });
+            contract.insurancePoliciesForPassengerInsuranceAmount(passengerAddress, policyNumber - 1, (error, result) => {
+                console.log("insurancePoliciesForPassengerInsuranceAmount", error, result);
+                DOM.elid("policyInsuranceAmount").value = result;
+            });
+            contract.insurancePoliciesForPassengerCreditAmount(passengerAddress, policyNumber - 1, (error, result) => {
+                console.log("insurancePoliciesForPassengerCreditAmount", error, result);
+                DOM.elid("policyInsuranceCredit").value = result;
             });
         })
 

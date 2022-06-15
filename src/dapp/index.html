@@ -70,7 +70,7 @@
                     <div class="form-group row">
                         <label for="numFlightsToRegister" class="col-sm-4 col-form-label">Number of Airlines</label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" id="numFlightsToRegister">
+                            <input type=number class="form-control" id="numFlightsToRegister">
                         </div>
                     </div>
                     <btn class="btn btn-primary" id="bootstrap-flights">Register Flights</btn>
@@ -168,7 +168,7 @@
                         <div class="col-sm-6">
                             <input type="text" class="form-control" id="passengerAddressInsuranceStatus" placeholder="address">
                         </div>
-                        <label for="numPoliciesPassenger" class="col-sm-4 col-form-label"># Policies</label>
+                        <label for="numPoliciesPassenger" class="col-sm-4 col-form-label">Number of Policies</label>
                         <div class="col-sm-6">
                             <input type="text" class="form-control" id="numPoliciesPassenger" readonly>
                         </div>
@@ -185,6 +185,37 @@
                     <input type="text" id="flight-number"> 
                     <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
                 </div>
+            </div>
+            <div class="col-sm-6">
+                <form>
+                    <div class="form-group row">
+                        <label for="passengerAddressInsuranceDetails" class="col-sm-4 col-form-label">Passenger Address</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="passengerAddressInsuranceDetails" placeholder="address">
+                        </div>
+                        <label for="policyNumber" class="col-sm-4 col-form-label">Policy Number</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="policyNumber" placeholder="0">
+                        </div>
+                        <label for="policyAirline" class="col-sm-4 col-form-label">Airline Address</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="policyAirline" readonly>
+                        </div>
+                        <label for="policyFlightName" class="col-sm-4 col-form-label">Flight Name</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="policyFlightName" readonly>
+                        </div>
+                        <label for="policyInsuranceAmount" class="col-sm-4 col-form-label">Insured Amount (Wei)</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="policyInsuranceAmount" readonly>
+                        </div>
+                        <label for="policyInsuranceCredit" class="col-sm-4 col-form-label">Credit Amount</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="policyInsuranceCredit" readonly>
+                        </div>
+                    </div>
+                    <btn class="btn btn-primary" id="policy-details">Policy Details</btn>
+                </form>
             </div>
         </div>
     </main>

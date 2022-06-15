@@ -373,6 +373,14 @@ contract FlightSuretyApp {
                                  uint8 statusCode) internal
     {
         dataContract.updateFlightStatus(flight, statusCode, timestamp);
+
+        // If the status is one that indicates delay due to airline
+        // fault the insurance policies need to be paid out
+        // i.e. STATUS_CODE_LATE_AIRLINE
+        if (statusCode == STATUS_CODE_LATE_AIRLINE)
+        {
+            dataContract.creditInsurees(airline, flight);
+        }
     }
 
 
@@ -418,6 +426,34 @@ contract FlightSuretyApp {
                                                                            returns(uint256)
     {
         return dataContract.numRegisteredInsurancePoliciesForPassenger(passenger);
+    }
+
+    function insurancePoliciesForPassengerAirline(address passenger, uint256 policyNumber) external
+                                                                                           view
+                                                                                           returns(address)
+    {
+        return dataContract.insurancePoliciesForPassengerAirline(passenger, policyNumber);
+    }
+
+    function insurancePoliciesForPassengerFlightName(address passenger, uint256 policyNumber) external
+                                                                                              view
+                                                                                              returns(bytes32)
+    {
+        return dataContract.insurancePoliciesForPassengerFlightName(passenger, policyNumber);
+    }
+
+    function insurancePoliciesForPassengerInsuranceAmount(address passenger, uint256 policyNumber) external
+                                                                                           view
+                                                                                           returns(uint256)
+    {
+        return dataContract.insurancePoliciesForPassengerInsuranceAmount(passenger, policyNumber);
+    }
+
+    function insurancePoliciesForPassengerCreditAmount(address passenger, uint256 policyNumber) external
+                                                                                                view
+                                                                                                returns(uint256)
+    {
+        return dataContract.insurancePoliciesForPassengerCreditAmount(passenger, policyNumber);
     }
 
     // withdraw flight insurance
@@ -662,8 +698,24 @@ interface FlightSuretyData {
                                                                            view
                                                                            returns(uint256);
 
-    function creditInsurees() external
-                              pure;
+    function insurancePoliciesForPassengerAirline(address passenger, uint256 policyNumber) external
+                                                                                           view
+                                                                                           returns(address);   
+ 
+    function insurancePoliciesForPassengerFlightName(address passenger, uint256 policyNumber) external
+                                                                                              view
+                                                                                              returns(bytes32);
+   
+    
+    function insurancePoliciesForPassengerInsuranceAmount(address passenger, uint256 policyNumber) external
+                                                                                                   view
+                                                                                                   returns(uint256);
+    
+    function insurancePoliciesForPassengerCreditAmount(address passenger, uint256 policyNumber) external
+                                                                                                view
+                                                                                                returns(uint256);
+    
+    function creditInsurees(address airline, bytes32 flightCode) external;
 
     function pay() external
                    pure;

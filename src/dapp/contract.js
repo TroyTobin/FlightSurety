@@ -218,11 +218,38 @@ export default class Contract {
              .call({ from: self.owner}, callback);
     }
 
-
     numRegisteredInsurancePoliciesForPassenger(passengerAdddress, callback) {
         let self = this;
         self.flightSuretyApp.methods
              .numRegisteredInsurancePoliciesForPassenger(passengerAdddress)
+             .call({from: self.owner}, callback);
+    }
+
+    insurancePoliciesForPassengerAirline(passengerAdddress, index, callback) {
+        let self = this;
+        self.flightSuretyApp.methods
+             .insurancePoliciesForPassengerAirline(passengerAdddress, index)
+             .call({from: self.owner}, callback);
+    }
+
+    insurancePoliciesForPassengerFlightName(passengerAdddress, index, callback) {
+        let self = this;
+        self.flightSuretyApp.methods
+             .insurancePoliciesForPassengerFlightName(passengerAdddress, index)
+             .call({from: self.owner}, callback);
+    }
+
+    insurancePoliciesForPassengerInsuranceAmount(passengerAdddress, index, callback) {
+        let self = this;
+        self.flightSuretyApp.methods
+             .insurancePoliciesForPassengerInsuranceAmount(passengerAdddress, index)
+             .call({from: self.owner}, callback);
+    }
+
+    insurancePoliciesForPassengerCreditAmount(passengerAdddress, index, callback) {
+        let self = this;
+        self.flightSuretyApp.methods
+             .insurancePoliciesForPassengerCreditAmount(passengerAdddress, index)
              .call({from: self.owner}, callback);
     }
 }
