@@ -287,6 +287,7 @@ contract FlightSuretyData {
     {
         Airline storage a = airlines[airline];
         a.funding += value;
+
     }
 
 
@@ -393,10 +394,16 @@ contract FlightSuretyData {
     function updateFlightStatus(bytes32 flightCode, uint8 status, uint256 timestamp) external
                                                                                      requireAuthorizedContract()
                                                                                      requireFlightRegistered(flightCode)
+                                                                                     returns(bool)
     {
         Flight storage f = flights[flightCode];
-        f.statusCode = status;
-        f.updatedTimestamp = timestamp;
+        if (f.statusCode != status)
+        {
+            f.statusCode = status;
+            f.updatedTimestamp = timestamp;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -537,13 +544,19 @@ contract FlightSuretyData {
         Insurance[] storage ia = insurancePoliciesAirlines[airline];
 
         for (uint i = 0; i < ia.length; i++) {
-            Insurance storage ins = ia[i];
-            if (ins.flightCode == flightCode){
-                address passenger = ins.passenger;
-                uint256 insuredAmount = ins.insurance;
-                uint256 credit = insuredAmount.mul(15).div(10);
-                ins.credit += credit;
-                emit InsuranceCredited(passenger, credit);
+            if (ia[i].flightCode == flightCode){
+                address passenger     = ia[i].passenger;
+                uint256 insuredAmount = ia[i].insurance;
+                uint256 credit        = insuredAmount.mul(15).div(10);
+                ia[i].credit += credit;
+
+                Insurance[] storage ip = insurancePoliciesPassenger[passenger];
+                for (uint j = 0; j < ip.length; j++) {
+                    if (ip[j].airline == airline && ip[j].flightCode == flightCode){
+                        ip[j].credit += credit;
+                        emit InsuranceCredited(passenger, credit);
+                    }
+                }
             }
         }
     }
@@ -553,12 +566,30 @@ contract FlightSuretyData {
      *  @dev Transfers eligible payout funds to insuree
      *
     */
-    function pay
-                            (
-                            )
-                            external
-                            pure
+    function pay(address passenger, address airline, bytes32 flightCode, uint256 amount) external
+                                                                                         payable
     {
+
+        Insurance[] storage ip = insurancePoliciesPassenger[passenger];
+        for (uint j = 0; j < ip.length; j++) {
+            if (ip[j].airline == airline && ip[j].flightCode == flightCode){
+                uint256 available_credit = ip[j].credit;
+                require(available_credit >= amount);
+
+                ip[j].credit -= amount;
+            }
+        }
+
+
+        Insurance[] storage ia = insurancePoliciesAirlines[airline];
+        for (uint i = 0; i < ia.length; i++) {
+            if (ia[i].flightCode == flightCode && ia[i].passenger == passenger){
+                ia[i].credit -= amount;
+            }
+        }
+
+        address payable passengerPay = payable(passenger);
+        passengerPay.transfer(amount);
     }
 
    /**
@@ -566,11 +597,8 @@ contract FlightSuretyData {
     *      resulting in insurance payouts, the contract should be self-sustaining
     *
     */   
-    function fund
-                            (   
-                            )
-                            public
-                            payable
+    function fund() public
+                    payable
     {
     }
 

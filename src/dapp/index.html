@@ -180,11 +180,21 @@
 
         <div class="row">
             <div class="col-sm top-20">
-                <div class="top-20">
-                    <label class="form">Flight</label>
-                    <input type="text" id="flight-number"> 
-                    <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
-                </div>
+                <form>
+                    <label class="form text-secondary">Submit to Oracles</label>
+
+                    <div class="form-group row">
+                        <label for="airlineAddressOracles" class="col-sm-4 col-form-label">Airline Address</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="airlineAddressOracles" placeholder="address">
+                        </div>
+                        <label for="flightNumberOracles" class="col-sm-4 col-form-label">Flight</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="flightNumberOracles">
+                        </div>
+                    </div>
+                    <btn class="btn btn-primary" id="submit-oracle">Consult Oracles</btn>
+                </form>
             </div>
             <div class="col-sm-6">
                 <form>
@@ -215,6 +225,33 @@
                         </div>
                     </div>
                     <btn class="btn btn-primary" id="policy-details">Policy Details</btn>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm top-20">
+                <form>
+                    <label class="form text-secondary">Withdrawal</label>
+
+                    <div class="form-group row">
+                        <label for="passengerAddressWithdrawal" class="col-sm-4 col-form-label">Passenger Address</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="passengerAddressWithdrawal" placeholder="address">
+                        </div>
+                        <label for="airlineAddressWithdrawal" class="col-sm-4 col-form-label">Airline Address</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="airlineAddressWithdrawal" placeholder="address">
+                        </div>
+                        <label for="flightNumberWithdrawal" class="col-sm-4 col-form-label">Flight Name</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="flightNumberWithdrawal">
+                        </div>
+                        <label for="withdrawlAmount" class="col-sm-4 col-form-label">Withdrawal Amount (Wei)</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="withdrawlAmount">
+                        </div>
+                    </div>
+                    <btn class="btn btn-primary" id="withdraw-credit">Withdraw Credit</btn>
                 </form>
             </div>
         </div>

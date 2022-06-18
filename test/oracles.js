@@ -1,6 +1,6 @@
 
 var Test = require('../config/testConfig.js');
-//var BigNumber = require('bignumber.js');
+var Web3  = require('web3');
 
 contract('Oracles', async (accounts) => {
 
@@ -8,7 +8,6 @@ contract('Oracles', async (accounts) => {
   var config;
   before('setup contract', async () => {
     config = await Test.Config(accounts);
-
     // Watch contract events
     const STATUS_CODE_UNKNOWN = 0;
     const STATUS_CODE_ON_TIME = 10;
@@ -36,7 +35,7 @@ contract('Oracles', async (accounts) => {
   it('can request flight status', async () => {
     
     // ARRANGE
-    let flight = 'ND1309'; // Course number
+    let flight = Web3.utils.padLeft(Web3.utils.asciiToHex('ND1309'));
     let timestamp = Math.floor(Date.now() / 1000);
 
     // Submit a request for oracles to get status information for a flight
@@ -59,14 +58,12 @@ contract('Oracles', async (accounts) => {
 
         }
         catch(e) {
-          // Enable this when debugging
-           console.log('\nError', idx, oracleIndexes[idx].toNumber(), flight, timestamp);
+           // Enable this when debugging
+           //console.log('\nError', idx, oracleIndexes[idx].toNumber(), flight, timestamp);
         }
 
       }
     }
-
-
   });
 
 

@@ -48,6 +48,9 @@ contract FlightSuretyApp {
 
     event RegisterFlightSuccess(bytes32 flightCode, address airline);
     event RegisterFlightFailure(bytes32 flightCode, address airline);
+
+    event processedFlightStatus(bytes32 flightCode, address airline, uint8 flightstatus);
+    event crediting(address airline,bytes32 flightCode);
  
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
@@ -372,14 +375,19 @@ contract FlightSuretyApp {
                                  uint256 timestamp,
                                  uint8 statusCode) internal
     {
-        dataContract.updateFlightStatus(flight, statusCode, timestamp);
-
-        // If the status is one that indicates delay due to airline
-        // fault the insurance policies need to be paid out
-        // i.e. STATUS_CODE_LATE_AIRLINE
-        if (statusCode == STATUS_CODE_LATE_AIRLINE)
+        if (dataContract.updateFlightStatus(flight, statusCode, timestamp))
         {
-            dataContract.creditInsurees(airline, flight);
+            emit processedFlightStatus(flight, airline, statusCode);
+
+            // If the status is one that indicates delay due to airline
+            // fault the insurance policies need to be paid out
+            // i.e. STATUS_CODE_LATE_AIRLINE
+            if (statusCode == STATUS_CODE_LATE_AIRLINE)
+            {
+
+                emit crediting(airline, flight);
+                dataContract.creditInsurees(airline, flight);
+            }
         }
     }
 
@@ -457,12 +465,15 @@ contract FlightSuretyApp {
     }
 
     // withdraw flight insurance
-    function withdrawFlightInsurance(address airline,
-                                     bytes32 flight) external
+    function withdrawFlightInsurance(address passenger,
+                                     address airline,
+                                     bytes32 flight,
+                                     uint256 amount) external
                                                      payable
                                                      requireAirlineIsRegistered(airline)
                                                      requireFlightIsRegistered(airline, flight)
-    {
+    {  
+        dataContract.pay{value: amount}(passenger, airline, flight, amount);
     }
 
 
@@ -676,7 +687,8 @@ interface FlightSuretyData {
     function numRegisteredFlights() external
                                     view
                                     returns(uint256);
-    function updateFlightStatus(bytes32 flightCode, uint8 status, uint256 timestamp) external;
+    function updateFlightStatus(bytes32 flightCode, uint8 status, uint256 timestamp) external
+                                                                                     returns (bool);
            
     function getFlightStatus(bytes32 flightCode) external
                                                  view
@@ -717,8 +729,8 @@ interface FlightSuretyData {
     
     function creditInsurees(address airline, bytes32 flightCode) external;
 
-    function pay() external
-                   pure;
+    function pay(address passenger, address airline, bytes32 flightCode, uint256 amount) external
+                                                                                         payable;
 
     function fund() external
                     payable;

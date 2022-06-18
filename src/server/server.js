@@ -100,7 +100,8 @@ flightSuretyApp.events.OracleRequest({
         let isCorrectIndex = await flightSuretyApp.methods.oracleIndexMatches(address[0], oracleIndex).call();
         if (isCorrectIndex)
         {
-          let status = STATUS_OPTIONS[Math.floor(Math.random()*STATUS_OPTIONS.length)];
+          // Force the status to be airline late - so we can test insurance
+          let status = STATUS_CODE_LATE_AIRLINE;
           await flightSuretyApp.methods.submitOracleResponse(oracleIndex, 
                                                        airline, 
                                                        flight, 

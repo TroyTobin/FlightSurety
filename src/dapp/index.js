@@ -44,13 +44,9 @@ const STATUS_MAP = {
 
         // User-submitted transaction
         DOM.elid('bootstrap-airlines').addEventListener('click', () => {
-            console.log("bootstrap airlines");
             let numAirlines = parseInt(DOM.elid('numAirlinesToRegister').value);
             web3.eth.getAccounts()
             .then(async (accounts) => {
-                console.log(accounts);
-                console.log("accounts length", accounts.length);
-                console.log("numAirlines", numAirlines);
 
                 // Offset of 2 accounts for the contract address and the "first" 
                 // airline that is registered on contract deploy
@@ -69,7 +65,6 @@ const STATUS_MAP = {
                             contract.voteAirline(votingAirlineAddress, newAirlineAddress, (error, result) => {});
                         }
 
-                        console.log("registering", newAirlineAddress, newAirlineName);
                         await contract.registerAirline(accounts[1], newAirlineAddress, newAirlineName, async (error, result) => {
                             contract.numRegisteredAirlines((error, result) => {
                                 DOM.elid("numAirlines").innerText = result;
@@ -77,7 +72,6 @@ const STATUS_MAP = {
 
                             if (result)
                             {
-                                console.log("ADD", typeof(result), newAirlineAddress, newAirlineName);
                                 addAirline(newAirlineAddress, newAirlineName);
                             }
                         })
@@ -94,7 +88,6 @@ const STATUS_MAP = {
 
         // User-submitted transaction
         DOM.elid('bootstrap-flights').addEventListener('click', () => {
-            console.log("bootstrap airlines");
             let numFlights = parseInt(DOM.elid('numFlightsToRegister').value);
             web3.eth.getAccounts()
             .then(async (accounts) => {
@@ -137,32 +130,28 @@ const STATUS_MAP = {
 
         // Read transaction
         contract.isOperational((error, result) => {
-            console.log(error,result);
             display('Operational Status', 'Check if contract is operational', 
                     [ { label: 'Operational', error: error, value: result} ]);
         });
     
         contract.numRegisteredAirlines((error, result) => {
-            console.log("Num registered airlines", error, result);
             DOM.elid("numAirlines").innerText = result;
         });
 
 
         contract.numRegisteredFlights((error, result) => {
-            console.log("Num registered flights", error, result);
             DOM.elid("numFlights").innerText = result;
         });
 
         contract.numRegisteredInsurancePolicies((error, result) => {
-            console.log("Num registered insurance policies", error, result);
             DOM.elid("numInsurancePolicies").innerText = result;
         });
 
         // User-submitted transaction
         DOM.elid('submit-oracle').addEventListener('click', () => {
-            let flight = DOM.elid('flight-number').value;
-
-            contract.fetchFlightStatus(flight, (error, result) => {
+            let airline = DOM.elid('airlineAddressOracles').value;
+            let flight = DOM.elid('flightNumberOracles').value;
+            contract.fetchFlightStatus(airline, flight, (error, result) => {
                 display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
             });
         })
@@ -174,7 +163,6 @@ const STATUS_MAP = {
             let passengerAddress = DOM.elid('passengerAddressInsurance').value;
             let flightName       = DOM.elid('flightNameInsurance').value;
             let amount           = DOM.elid('amountInsurance').value;
-            console.log("Buy insurance", airlineAddress, airlineName, flightName, passengerAddress, amount);
             contract.purchaseFlightInsurance(airlineAddress, airlineName, flightName, passengerAddress, amount, (error, result) => {
                 contract.numRegisteredInsurancePolicies((error, result) => {
                     DOM.elid("numInsurancePolicies").innerText = result;
@@ -183,11 +171,18 @@ const STATUS_MAP = {
         })
 
         // User-submitted transaction
+        DOM.elid('withdraw-credit').addEventListener('click', () => {
+            let passengerAddress = DOM.elid('passengerAddressWithdrawal').value;
+            let airlineAddress   = DOM.elid('airlineAddressWithdrawal').value;
+            let flightNumber     = DOM.elid('flightNumberWithdrawal').value;
+            let amount           = DOM.elid('withdrawlAmount').value;
+            contract.withdrawFlightInsurance(passengerAddress, airlineAddress, flightNumber, amount, (error, result) => {
+            });
+        })
+        // User-submitted 
         DOM.elid('check-num-policies').addEventListener('click', () => {
             let passengerAddress = DOM.elid('passengerAddressInsuranceStatus').value;
-            console.log("Num Policy Count", passengerAddress);
             contract.numRegisteredInsurancePoliciesForPassenger(passengerAddress, (error, result) => {
-                console.log("num policies for passenger returned", error, result);
                 DOM.elid("numPoliciesPassenger").value = result;
             });
         })
@@ -196,21 +191,16 @@ const STATUS_MAP = {
         DOM.elid('policy-details').addEventListener('click', () => {
             let passengerAddress = DOM.elid('passengerAddressInsuranceDetails').value;
             let policyNumber = DOM.elid('policyNumber').value;
-            console.log("Policy Details", passengerAddress, policyNumber);
             contract.insurancePoliciesForPassengerAirline(passengerAddress, policyNumber - 1, (error, result) => {
-                console.log("insurancePoliciesForPassengerAirline", error, result);
                 DOM.elid("policyAirline").value = result;
             });
             contract.insurancePoliciesForPassengerFlightName(passengerAddress, policyNumber - 1, (error, result) => {
-                console.log("insurancePoliciesForPassengerFlightName", error, web3.utils.hexToString(result));
                 DOM.elid("policyFlightName").value = web3.utils.hexToString(result);
             });
             contract.insurancePoliciesForPassengerInsuranceAmount(passengerAddress, policyNumber - 1, (error, result) => {
-                console.log("insurancePoliciesForPassengerInsuranceAmount", error, result);
                 DOM.elid("policyInsuranceAmount").value = result;
             });
             contract.insurancePoliciesForPassengerCreditAmount(passengerAddress, policyNumber - 1, (error, result) => {
-                console.log("insurancePoliciesForPassengerCreditAmount", error, result);
                 DOM.elid("policyInsuranceCredit").value = result;
             });
         })
@@ -229,7 +219,6 @@ const STATUS_MAP = {
                 DOM.elid("airlineInfoFunding").value = contract.weiToEther(result);
             });
             contract.airlineVotes(infoAddress, (error, result) => {
-                console.log("votes", result);
                 DOM.elid("airlineInfoVotes").value = result;
             });
         })
@@ -273,8 +262,6 @@ const STATUS_MAP = {
             let newAirlineAddress    = DOM.elid('voteeAirlineAddress').value;
             let votingAirlineAddress = DOM.elid('votingAirlineAddress').value;
 
-            console.log("vote airline", newAirlineAddress, votingAirlineAddress)
-
             contract.voteAirline(votingAirlineAddress, newAirlineAddress, (error, result) => {
                 console.log("vote", error, result);
             });
@@ -306,8 +293,6 @@ const STATUS_MAP = {
         // User-submitted transaction
         DOM.elid('flight-info').addEventListener('click', () => {
             let flightInfoCode = DOM.elid('flightInfoCode').value;
-            console.log("getting flight status for ", flightInfoCode);
-          
             contract.getFlightAirline(flightInfoCode, (error, result) => {
                 DOM.elid("flightInfoAirlineAddress").value  = result;
             });
